@@ -1,8 +1,8 @@
 # L1 GitHub Hosts
 
-> **更新 GitHub 最新 hosts · GitHub 访问加速 · Windows 单文件 .bat**
+> **更新 GitHub为最新 hosts · GitHub 访问加速 · Windows bat单文件**
 >
-> 解决 `github.com` 打不开、转圈、README 图片无法显示、`raw.githubusercontent.com` 加载失败。
+> 解决 GitHub 无法访问、打不开、一直转圈、README 图片无法显示。两种用法：Windows bat 单文件工具本机实测写入 + 实时 hosts 列表
 
 **[⬇ 下载 Windows 版（.bat 单文件）](https://github.com/gooooddayy/L1-github-hosts/releases/latest)** ·
 **[🌐 在线实时 hosts 列表](https://gooooddayy.github.io/L1-github-hosts/)** ·
@@ -144,7 +144,7 @@ https://gooooddayy.github.io/L1-github-hosts/hosts.txt
 <details>
 <summary><b>两种方法可以一起用吗？</b></summary>
 
-不要。方法二复制的内容自带独立的起止标记，和方法一写的那段是两套，同时存在会让同一个域名有多条记录、互相抢优先级。
+**不要**。方法二复制的内容自带独立的起止标记，和方法一写的那段是两套，同时存在会让同一个域名有多条记录、互相抢优先级。
 
 选一种就好。切换前把另一套删掉，或点工具里的「恢复初始」。
 
@@ -249,4 +249,4 @@ GitHub 访问加速 · 更新 GitHub 最新 hosts · GitHub 打不开怎么办 �
 
 ## License
 
-[MIT](LICENSE) — 随便用，出问题别找我。
+[MIT](LICENSE)
