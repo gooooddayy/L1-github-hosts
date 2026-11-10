@@ -106,13 +106,14 @@
   code.cp::after{content:"复制";display:none;font-size:10px;color:#94a3b8;margin-left:6px}
   code.cp:hover::after{display:inline}
 
-  /* steps */
-  .steps{display:grid;gap:14px}
-  .step{display:flex;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px}
-  .step .idx{flex:0 0 34px;height:34px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
-  .step h3{font-size:15px;margin-bottom:4px}
-  .step p{font-size:14px;color:var(--muted)}
-  .step p + p{margin-top:6px}
+  /* 写入 hosts 的四步流程 */
+  .flow{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:760px){.flow{grid-template-columns:1fr}}
+  .flow-item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .flow-item .n{flex:0 0 26px;height:26px;border-radius:8px;background:var(--soft);color:var(--green-d);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .flow-item .body{flex:1 1 auto;min-width:0}
+  .flow-item b{display:block;font-size:14px;margin-bottom:2px}
+  .flow-item p{font-size:13px;color:var(--muted);line-height:1.65}
 
   /* dns */
   .dns-main{background:var(--card);border:2px solid #86efac;border-radius:var(--radius);padding:22px 24px;margin-bottom:16px}
@@ -191,7 +192,7 @@
     <a class="brand" href="./"><i></i>L1 GitHub Hosts</a>
     <div class="links">
       <a href="#methods">两种用法</a>
-      <a href="#usage">使用步骤</a>
+      <a href="#usage">写入 hosts</a>
       <a href="#dns">刷新 DNS</a>
       <a href="#faq">常见问题</a>
       <a href="https://github.com/gooooddayy/L1-github-hosts" target="_blank" rel="noopener">GitHub</a>
@@ -212,7 +213,7 @@
   <div class="methods">
     <div class="method primary">
       <h3><span class="badge">推荐</span>方法一：Windows 单文件 .bat</h3>
-      <p>下载一个 <b>.bat 文件</b>（不是安装包，不用解压、不用装依赖），双击运行。它在<b>你自己的网络</b>上把每个候选 IP 的完整链路测一遍，把真正能用的写进 hosts，写完再逐个域名验一次。</p>
+      <p>下载一个 <b>.bat 文件</b>（不是安装包，不用解压、不用装依赖），双击运行 → 点「开始测速」等 15～25 秒。它在<b>你自己的网络</b>上把每个候选 IP 的完整链路测一遍，把真正能用的写进 hosts，写完再逐个域名验一次。</p>
       <p class="muted small">单次 TLS 连接成功率约 70%，所以每个域名写 4 个不同网段的 IP —— 全挂概率从 9% 降到 0.8%。任何一条能通，页面就能开。</p>
       <p class="muted small">系统要求：Windows 7 SP1 及以上（Win7 需先装 PowerShell 5.1），无需 .NET 以外的运行库。</p>
       <p class="muted small">只改动 hosts 里 <code># === GitHub IP BEGIN ===</code> 到 <code>END</code> 之间的内容，其它行不碰；写入前自动备份为 <code>hosts.bak</code>。</p>
@@ -254,45 +255,41 @@
 </section>
 
 <section class="wrap" id="usage">
-  <h2>写入 hosts（4 步）</h2>
-  <p class="lead">方法一的完整流程。只要一个 <b>.bat 文件</b>，绿色免安装；地址和命令旁边带「复制」的地方点一下就能复制。</p>
+  <h2>点「写入 hosts」之后</h2>
+  <p class="lead">测速完成后点一下「写入 hosts」，下面这四件事工具会自动做完，不用你再操作。</p>
 
-  <div class="steps">
-    <div class="step">
-      <div class="idx">1</div>
-      <div>
-        <h3>下载 <code>L1-GitHub-Hosts.bat</code></h3>
-        <p>点上方下载按钮，或直接打开：</p>
-        <p><code class="cp">https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat</code></p>
-        <p class="muted">如果提示「此文件来自其他计算机」：右键文件 → 属性 → 勾选底部「解除锁定」→ 确定。</p>
+  <div class="flow">
+    <div class="flow-item">
+      <div class="n">1</div>
+      <div class="body">
+        <b>自动备份</b>
+        <p>先把当前 hosts 复制成 <code>hosts.bak</code>，只保留一份，每次写入覆盖，不会越积越多。</p>
       </div>
     </div>
-
-    <div class="step">
-      <div class="idx">2</div>
-      <div>
-        <h3>双击运行，UAC 点「是」</h3>
-        <p>因为要写 <b>hosts</b> 这个系统文件，必须管理员权限，只会弹这一次。然后点界面上的「开始测速」，等 15～25 秒。</p>
+    <div class="flow-item">
+      <div class="n">2</div>
+      <div class="body">
+        <b>写入 IP</b>
+        <p>每个域名 4 个，尽量来自不同网段；只动 <code>BEGIN</code> / <code>END</code> 标记之间的内容，其它行不碰。</p>
       </div>
     </div>
-
-    <div class="step">
-      <div class="idx">3</div>
-      <div>
-        <h3>点「写入 hosts」</h3>
-        <p>会自动备份 → 写入 → 刷新本地系统 DNS → 逐个域名验证，不通就换 IP 重写。</p>
-        <p class="muted">右上角提示「已写入并校验通过（10/10 个域名）」就成功了。</p>
+    <div class="flow-item">
+      <div class="n">3</div>
+      <div class="body">
+        <b>刷新本地系统 DNS</b>
+        <p>自动执行 <code>ipconfig /flushdns</code>，让新记录立刻生效，不用你手动敲命令。</p>
       </div>
     </div>
-
-    <div class="step">
-      <div class="idx">4</div>
-      <div>
-        <h3>刷新本地 DNS</h3>
-        <p>没做的话 hosts 改了也可能不生效。见下一节。</p>
+    <div class="flow-item">
+      <div class="n">4</div>
+      <div class="body">
+        <b>逐个域名验证</b>
+        <p>按系统实际解析结果跑完 TCP + TLS + 首字节，不通就换下一个 IP 重写，最多试 3 轮。</p>
       </div>
     </div>
   </div>
+
+  <p class="muted small" style="margin-top:16px">右上角提示「已写入并校验通过（10/10 个域名）」就成功了。如果之后还是打不开，去下一节手动再刷新一次 DNS。</p>
 </section>
 
 <section class="wrap" id="dns">
