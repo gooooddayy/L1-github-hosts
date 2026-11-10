@@ -6,8 +6,7 @@
 
 **[⬇ 下载 Windows 版（.bat 单文件）](https://github.com/gooooddayy/L1-github-hosts/releases/latest)** ·
 **[🌐 在线实时 hosts 列表](https://gooooddayy.github.io/L1-github-hosts/)** ·
-**[📖 使用步骤](#下载与运行)** ·
-**[🧭 开发记录与踩坑](docs/development.md)**
+**[📖 使用步骤](#下载与运行)**
 
 ---
 
