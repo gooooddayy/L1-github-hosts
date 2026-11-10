@@ -80,7 +80,10 @@
   .step .idx{flex:0 0 34px;height:34px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
   .step h3{font-size:15px;margin-bottom:4px}
   .step p{font-size:14px;color:var(--muted)}
-  code{background:#eef4f1;border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:13px;font-family:ui-monospace,Consolas,monospace}
+  code{background:#eef4f1;border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:13px;font-family:ui-monospace,Consolas,monospace;cursor:pointer;transition:.15s}
+  code:hover{background:#d9f2e6;border-color:#86efac}
+  code::after{content:"复制";font-size:10px;color:#94a3b8;margin-left:6px;opacity:0;transition:.15s}
+  code:hover::after{opacity:1}
 
   /* table */
   .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:14px}
@@ -129,7 +132,7 @@
   <div class="wrap">
     <a class="brand" href="./"><i></i>L1 GitHub Hosts</a>
     <div class="links">
-      <a href="#download">下载</a>
+      <a href="#usage">使用方法</a>
       <a href="#live">实时 IP</a>
       <a href="#dns">DNS 刷新</a>
       <a href="#faq">常见问题</a>
@@ -193,28 +196,42 @@
   </div>
 </section>
 
-<section class="wrap">
-  <h2>三步搞定</h2>
+<section class="wrap" id="usage">
+  <h2>使用方法（4 步）</h2>
+  <p class="lead">灰底的地址和命令，点一下就能复制。</p>
   <div class="steps">
     <div class="step">
       <div class="idx">1</div>
       <div>
-        <h3>下载并解除锁定</h3>
-        <p>只有一个 <code>.bat</code> 文件。如果提示「来自其他计算机」，右键 → 属性 → 勾选「解除锁定」。</p>
+        <h3>下载 <code>L1-GitHub-Hosts.bat</code></h3>
+        <p>单文件，免安装免解压。下载地址：</p>
+        <p style="margin-top:6px"><code>https://github.com/gooooddayy/L1-github-hosts/releases/latest</code></p>
+        <p style="margin-top:6px" class="muted">如果提示「来自其他计算机」：右键 → 属性 → 勾选「解除锁定」→ 确定。</p>
       </div>
     </div>
     <div class="step">
       <div class="idx">2</div>
       <div>
         <h3>双击，点「开始测速」</h3>
-        <p>会弹一次 UAC —— 修改 hosts 必须管理员权限。等 15～25 秒。</p>
+        <p>会弹一次 UAC —— 修改 hosts 必须管理员权限，点「是」。等 15～25 秒。</p>
       </div>
     </div>
     <div class="step">
       <div class="idx">3</div>
       <div>
         <h3>点「写入 hosts」</h3>
-        <p>自动备份、写入、刷新系统 DNS，然后逐个验证。看到「校验通过 10/10」就成功了。</p>
+        <p>自动备份、写入、刷新系统 DNS，然后逐个域名验证。目标文件：</p>
+        <p style="margin-top:6px"><code>C:\Windows\System32\drivers\etc\hosts</code></p>
+        <p style="margin-top:6px" class="muted">看到「校验通过 10/10 个域名」就成功了。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="idx">4</div>
+      <div>
+        <h3>清浏览器 DNS 缓存</h3>
+        <p>系统 DNS 刷新了，浏览器还有一层自己的缓存。Chrome / Edge 打开：</p>
+        <p style="margin-top:6px"><code>chrome://net-internals/#dns</code></p>
+        <p style="margin-top:6px" class="muted">点 <b>Clear host cache</b>。Firefox 用 <code>about:networking#dns</code>，命令行用 <code>ipconfig /flushdns</code>。详见 <a href="#dns">下一节</a>。</p>
       </div>
     </div>
   </div>
@@ -512,6 +529,13 @@
   }
   Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'), function (btn) {
     btn.addEventListener('click', function () { copy(btn.getAttribute('data-copy')); });
+  });
+
+  // 页面里所有灰底代码片段：点一下即复制。
+  // 收在这里统一处理，新增地址/命令时不用再单独加按钮。
+  Array.prototype.forEach.call(document.querySelectorAll('code'), function (el) {
+    el.setAttribute('title', '点击复制');
+    el.addEventListener('click', function () { copy(el.textContent.trim()); });
   });
 })();
 </script>
