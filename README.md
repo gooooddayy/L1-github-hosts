@@ -69,11 +69,23 @@ GitHub 在国内访问不稳，绝大多数人的做法是找一份别人维护�
 
 系统 DNS 刷新了，但 **浏览器有自己的 DNS 缓存**，不清的话还是走旧 IP。
 
-| 浏览器 | 操作 |
-|---|---|
-| **Chrome / Edge** | 地址栏输入 `chrome://net-internals/#dns` → 点 **Clear host cache** |
-| **Firefox** | 地址栏输入 `about:networking#dns` → 点 **Clear DNS Cache** |
-| **系统级** | `Win + R` → 输入 `cmd` → 回车 → 输入 `ipconfig /flushdns` |
+**Chrome / Edge** —— 地址栏粘贴下面这行，回车后点 **Clear host cache**
+
+```
+chrome://net-internals/#dns
+```
+
+**Firefox** —— 地址栏粘贴下面这行，回车后点 **Clear DNS Cache**
+
+```
+about:networking#dns
+```
+
+**系统级** —— `Win + R` 输入 `cmd` 回车，再粘贴下面这行
+
+```
+ipconfig /flushdns
+```
 
 > ⚠️ `chrome://` 和 `about:` 这类内部页面**不允许网页直接跳转**（浏览器安全限制），所以在线页面上的按钮是「复制链接」，粘到地址栏回车即可。
 
