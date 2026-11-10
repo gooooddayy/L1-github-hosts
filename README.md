@@ -6,7 +6,8 @@
 
 **[⬇ 下载 Windows 版（.bat 单文件）](https://github.com/gooooddayy/L1-github-hosts/releases/latest)** ·
 **[🌐 在线实时 hosts 列表](https://gooooddayy.github.io/L1-github-hosts/)** ·
-**[📖 使用步骤](#下载与运行)**
+**[📖 使用步骤](#下载与运行)** ·
+**[🧭 开发记录与踩坑](docs/development.md)**
 
 ---
 
@@ -237,9 +238,15 @@ powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -TestRemote  # 
 
 ---
 
-## 更新日志
+## 文档索引
 
-见 [CHANGELOG.md](CHANGELOG.md)，开发过程中的问题与解决方案见 [docs/development.md](docs/development.md)。
+| 文档 | 里面有什么 |
+|---|---|
+| [README.md](README.md) | 就是这个文件：用法、两种方式对比、FAQ、与同类项目对比 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本记录，每个版本改了什么、依据是什么 |
+| [**docs/development.md**](docs/development.md) | **完整迭代记录**：竞品分析 → 命令行原型 → GUI 选型 → 单文件打包 → 10 个踩坑 → 成功率优化（三次实测）→ 排序口径与网段分散 → 稳定性与兼容性 → 边界压测 → 全流程自检 |
+| [docs/setup-workflow.md](docs/setup-workflow.md) | `hosts.txt` 自动刷新的原理与 Actions 配置 |
+| [src/GitHub-IP-GUI.ps1](src/GitHub-IP-GUI.ps1) | 全部源码，1 个文件，带 4 个自检开关 |
 
 ---
 
