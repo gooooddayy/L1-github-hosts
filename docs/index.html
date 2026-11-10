@@ -107,6 +107,9 @@
   code.cp:hover::after{display:inline}
 
   /* 写入 hosts 的四步流程 */
+  .wsub{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;margin:30px 0 8px;letter-spacing:-.2px}
+  .wsub:first-of-type{margin-top:16px}
+  .wsub::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--green);flex:0 0 auto}
   .flow{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   @media(max-width:760px){.flow{grid-template-columns:1fr}}
   .flow-item{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
@@ -255,8 +258,10 @@
 </section>
 
 <section class="wrap" id="usage">
-  <h2>点「写入 hosts」之后</h2>
-  <p class="lead">测速完成后点一下「写入 hosts」，下面这四件事工具会自动做完，不用你再操作。</p>
+  <h2>写入 hosts</h2>
+
+  <h3 class="wsub">方法一 · bat工具</h3>
+  <p class="lead">测速完成后点一下「写入 hosts」，下面这四件事会自动做完，不用你再操作。</p>
 
   <div class="flow">
     <div class="flow-item">
@@ -290,6 +295,16 @@
   </div>
 
   <p class="muted small" style="margin-top:16px">右上角提示「已写入并校验通过（10/10 个域名）」就成功了。如果之后还是打不开，去下一节手动再刷新一次 DNS。</p>
+
+  <h3 class="wsub">方法二 · 实时列表</h3>
+  <p class="lead">手动添加：把列表里复制到的内容，粘到这个系统文件的末尾保存即可。</p>
+
+  <div class="copyline">
+    <span>C:\Windows\System32\drivers\etc\hosts</span>
+    <button data-copy="C:\Windows\System32\drivers\etc\hosts">复制路径</button>
+  </div>
+
+  <p class="muted small" style="margin-top:12px">这个文件需要管理员权限才能保存。保存后再按下一节的步骤刷新一次本地 DNS，新记录才会生效。</p>
 </section>
 
 <section class="wrap" id="dns">
