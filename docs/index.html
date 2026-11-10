@@ -50,7 +50,7 @@
   nav .links a:hover{color:var(--green-d);text-decoration:none}
 
   /* hero */
-  header.wrap{padding-top:56px;padding-bottom:40px;text-align:center}
+  header.wrap{padding-top:56px;padding-bottom:26px;text-align:center}
   .kicker{display:inline-block;font-size:13px;color:var(--green-d);background:var(--soft);border:1px solid #bbf7d0;padding:5px 12px;border-radius:99px;margin-bottom:18px}
   h1{font-size:40px;line-height:1.25;letter-spacing:-.5px;margin-bottom:16px}
   h1 em{font-style:normal;color:var(--green-d)}
@@ -202,11 +202,7 @@
 <header class="wrap" id="top">
   <span class="kicker">Windows 单文件 .bat · 本机实测 · 写完自动校验</span>
   <h1>GitHub 访问加速<br>一键更新<em>最新 hosts</em></h1>
-  <p class="sub">解决 <code>github.com</code> 打不开、一直转圈、README 图片无法显示、<code>raw.githubusercontent.com</code> 加载失败。两种用法：下载一个 bat 在本机实测写入，或者直接复制在线列表。</p>
-  <div class="cta" id="download">
-    <a class="btn btn-primary" href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">⬇ 下载 Windows 版（.bat）</a>
-    <button class="btn btn-ghost" id="open-live">查看实时 hosts 列表</button>
-  </div>
+  <p class="sub">解决 GitHub 无法访问、打不开、一直转圈、README 图片无法显示。两种用法：Windows bat 单文件工具本机实测写入 + 实时 hosts 列表</p>
 </header>
 
 <section class="wrap" id="methods">
@@ -218,9 +214,11 @@
       <h3><span class="badge">推荐</span>方法一：Windows 单文件 .bat</h3>
       <p>下载一个 <b>.bat 文件</b>（不是安装包，不用解压、不用装依赖），双击运行。它在<b>你自己的网络</b>上把每个候选 IP 的完整链路测一遍，把真正能用的写进 hosts，写完再逐个域名验一次。</p>
       <p class="muted small">单次 TLS 连接成功率约 70%，所以每个域名写 4 个不同网段的 IP —— 全挂概率从 9% 降到 0.8%。任何一条能通，页面就能开。</p>
+      <p class="muted small">系统要求：Windows 7 SP1 及以上（Win7 需先装 PowerShell 5.1），无需 .NET 以外的运行库。</p>
+      <p class="muted small">只改动 hosts 里 <code># === GitHub IP BEGIN ===</code> 到 <code>END</code> 之间的内容，其它行不碰；写入前自动备份为 <code>hosts.bak</code>。</p>
       <div class="foot" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-        <a class="btn btn-primary" href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">下载 L1-GitHub-Hosts.bat</a>
-        <button class="linkbtn" data-copy="https://github.com/gooooddayy/L1-github-hosts/releases/latest">复制下载链接</button>
+        <a class="btn btn-primary" href="https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat" download>下载 L1-GitHub-Hosts.bat</a>
+        <button class="linkbtn" data-copy="https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat">复制下载链接</button>
       </div>
     </div>
 
@@ -228,7 +226,9 @@
       <h3>方法二：在线实时 hosts 列表</h3>
       <p>什么都不用下载。打开列表，把现成的内容复制或下载下来，粘进系统 hosts 文件即可。</p>
       <p class="muted small">数据来自多个公开项目交叉验证，并按实测延迟分层排序。但它<b>不在你这台机器上测</b>，只能保证「大概率能用」，不能保证对你这根网线最优。</p>
-      <p class="muted small">适合临时应急、不想运行程序，或者 Mac / Linux 用户。</p>
+      <p class="muted small" style="margin-bottom:4px">要粘贴的目标文件：</p>
+      <p class="muted small" style="margin-bottom:12px"><code class="cp" style="font-size:12px">C:\Windows\System32\drivers\etc\hosts</code></p>
+      <p class="muted small">适合临时应急、不想运行程序，或者 Win / Mac / Linux 用户。</p>
       <div class="foot">
         <button class="btn btn-ghost" id="open-live-2">打开列表 / 复制 / 下载</button>
       </div>
@@ -238,7 +238,7 @@
   <div class="tblwrap" style="margin-top:20px">
   <table class="tbl">
     <thead>
-      <tr><th style="width:22%">对比项</th><th>方法一 · .bat</th><th>方法二 · 在线列表</th></tr>
+      <tr><th style="width:22%">对比项</th><th>方法一 · bat工具</th><th>方法二 · 实时列表</th></tr>
     </thead>
     <tbody>
       <tr><td>测速位置</td><td><b>你自己的电脑</b>，走你的宽带</td><td>第三方项目的机器</td></tr>
@@ -246,7 +246,7 @@
       <tr><td>每个域名几个 IP</td><td><b>4 个</b>，尽量来自不同网段</td><td>4 个，按共识与延迟分层</td></tr>
       <tr><td>需要什么</td><td>管理员权限（一次 UAC）</td><td>无，复制粘贴即可</td></tr>
       <tr><td>数据新鲜度</td><td>每次运行都是当次实测结果</td><td>源站与快照定时刷新，可能滞后几十分钟</td></tr>
-      <tr><td>适合</td><td>长期使用、想一次配好</td><td>临时应急、不想运行程序、Mac / Linux 用户</td></tr>
+      <tr><td>适合</td><td>长期使用、想一次配好</td><td>临时应急、不想运行程序、Win / Mac / Linux 用户</td></tr>
     </tbody>
   </table>
   </div>
@@ -254,8 +254,8 @@
 </section>
 
 <section class="wrap" id="usage">
-  <h2>方法一：使用步骤（4 步）</h2>
-  <p class="lead">Windows 版就是一个 <b>.bat 文件</b>，绿色免安装。地址和命令旁边带「复制」的地方点一下就能复制。</p>
+  <h2>写入 hosts（4 步）</h2>
+  <p class="lead">方法一的完整流程。只要一个 <b>.bat 文件</b>，绿色免安装；地址和命令旁边带「复制」的地方点一下就能复制。</p>
 
   <div class="steps">
     <div class="step">
@@ -263,7 +263,7 @@
       <div>
         <h3>下载 <code>L1-GitHub-Hosts.bat</code></h3>
         <p>点上方下载按钮，或直接打开：</p>
-        <p><code class="cp">https://github.com/gooooddayy/L1-github-hosts/releases/latest</code></p>
+        <p><code class="cp">https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat</code></p>
         <p class="muted">如果提示「此文件来自其他计算机」：右键文件 → 属性 → 勾选底部「解除锁定」→ 确定。</p>
       </div>
     </div>
@@ -280,8 +280,7 @@
       <div class="idx">3</div>
       <div>
         <h3>点「写入 hosts」</h3>
-        <p>自动备份 → 写入 → 刷新系统 DNS → 逐个域名验证，不通就换 IP 重写。写入的目标文件是：</p>
-        <p><code class="cp">C:\Windows\System32\drivers\etc\hosts</code></p>
+        <p>会自动备份 → 写入 → 刷新本地系统 DNS → 逐个域名验证，不通就换 IP 重写。</p>
         <p class="muted">右上角提示「已写入并校验通过（10/10 个域名）」就成功了。</p>
       </div>
     </div>
@@ -290,15 +289,15 @@
       <div class="idx">4</div>
       <div>
         <h3>刷新本地 DNS</h3>
-        <p>这一步最要紧，没做的话 hosts 改了也可能不生效。见下一节。</p>
+        <p>没做的话 hosts 改了也可能不生效。见下一节。</p>
       </div>
     </div>
   </div>
 </section>
 
 <section class="wrap" id="dns">
-  <h2>刷新 DNS：本地那条是必做的</h2>
-  <p class="lead">hosts 改完，系统里还缓存着旧的解析结果。刷新本地 DNS 才是关键动作，浏览器那层只是补充。</p>
+  <h2>刷新 DNS</h2>
+  <p class="lead">hosts 改完，系统里还缓存着旧的解析结果。先刷新本地 DNS，再看浏览器那一层。</p>
 
   <div class="dns-main">
     <h3>① 本地 DNS 刷新（必做）</h3>
@@ -431,7 +430,7 @@
 
 <footer>
   <div class="wrap">
-    <p>L1 GitHub Hosts · MIT License · <a href="https://github.com/gooooddayy/L1-github-hosts" target="_blank" rel="noopener">GitHub 仓库</a> · <a href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">下载</a></p>
+    <p>L1 GitHub Hosts · MIT License · <a href="https://github.com/gooooddayy/L1-github-hosts" target="_blank" rel="noopener">GitHub 仓库</a> · <a href="https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat" download>下载</a></p>
     <p style="margin-top:8px">本站只做网络质量监测与数据展示，不提供任何代理或翻墙手段。</p>
   </div>
 </footer>
@@ -466,14 +465,14 @@
 
     <div class="modal-foot">
       <button class="btn btn-primary sm" id="copy-all">复制全部（含头尾标记）</button>
-      <a class="btn btn-ghost sm" href="hosts.txt" download>下载 hosts.txt</a>
+      <a class="btn btn-ghost sm" id="download-hosts" href="hosts.txt" download>下载 hosts.txt</a>
       <button class="btn btn-ghost sm" id="refresh">重新拉取</button>
     </div>
 
     <div class="modal-note">
       <p>复制的内容已经带好起止标记，直接粘到 hosts 文件末尾保存即可，不会再叠加第二份。</p>
       <p>⚠️ 不要和方法一同时使用。如果之前用过 .bat，先在工具里点「恢复初始」，再粘这一段。</p>
-      <p class="muted">数据来自 GitHub520 / ittuann / Licoy 等公开项目，按「实测延迟分层 → 多源共识」排序。仓库快照由 GitHub Actions 每小时刷新。</p>
+      <p class="muted">数据来自 GitHub520 / ittuann / Licoy 等公开项目，按「实测延迟分层 → 多源共识」排序。下载的文件由当前页面数据即时生成，文件头时间就是本次读取时间。</p>
     </div>
   </div>
 </div>
@@ -489,7 +488,7 @@
   "operatingSystem": "Windows 10, Windows 11, Windows 8, Windows 7",
   "description": "GitHub 访问加速工具（Windows 单文件 .bat）：本机实测可用 IP，一键写入 hosts，写完自动校验。解决 github.com 打不开、README 图片无法显示、raw.githubusercontent.com 加载失败。",
   "url": "https://gooooddayy.github.io/L1-github-hosts/",
-  "downloadUrl": "https://github.com/gooooddayy/L1-github-hosts/releases/latest",
+  "downloadUrl": "https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat",
   "softwareVersion": "1.0.1",
   "license": "https://opensource.org/licenses/MIT",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
@@ -691,13 +690,33 @@
     document.body.style.overflow = '';
   }
 
-  document.getElementById('open-live').addEventListener('click', openModal);
-  document.getElementById('open-live-2').addEventListener('click', openModal);
+  // 打开弹窗的入口可能有多处（或后续被去掉），统一按 id 兜底绑定
+  ['open-live', 'open-live-2'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('click', openModal);
+  });
   document.getElementById('close-live').addEventListener('click', closeModal);
   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
   document.getElementById('refresh').addEventListener('click', load);
+
+  // 下载走浏览器本地生成，内容与「复制全部」一致，
+  // 文件头的时间就是本次读取时间，不会因为仓库快照没刷新而过期。
+  document.getElementById('download-hosts').addEventListener('click', function (e) {
+    var txt = buildBlock();
+    if (!txt) { e.preventDefault(); showToast('列表还没加载好，请稍候'); return; }
+    e.preventDefault();
+    var blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'hosts.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
+    showToast('已生成 hosts.txt（本次读取 ' + now() + '）');
+  });
   document.getElementById('copy-all').addEventListener('click', function () {
     var txt = buildBlock();
     if (!txt) { showToast('列表还没加载好'); return; }
