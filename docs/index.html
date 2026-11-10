@@ -50,7 +50,7 @@
   nav .links a:hover{color:var(--green-d);text-decoration:none}
 
   /* hero */
-  header{padding:56px 0 40px;text-align:center}
+  header.wrap{padding-top:56px;padding-bottom:40px;text-align:center}
   .kicker{display:inline-block;font-size:13px;color:var(--green-d);background:var(--soft);border:1px solid #bbf7d0;padding:5px 12px;border-radius:99px;margin-bottom:18px}
   h1{font-size:40px;line-height:1.25;letter-spacing:-.5px;margin-bottom:16px}
   h1 em{font-style:normal;color:var(--green-d)}
@@ -62,23 +62,32 @@
   .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line)}
   .btn-ghost:hover{border-color:var(--green);text-decoration:none}
   .btn.sm{padding:8px 16px;font-size:13px}
+  .linkbtn{border:0;background:none;padding:0;color:var(--green-d);font-size:13px;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:3px}
+  .linkbtn:hover{color:var(--green)}
 
   /* generic section */
-  section{padding:44px 0}
+  /* 注意：这些 section 同时带 .wrap，而 .wrap 的 padding:0 20px 会覆盖上下内边距，
+     所以这里必须用 section.wrap 提高优先级，否则整页段落间距会丢失。 */
+  section.wrap{padding-top:44px;padding-bottom:44px}
+  section[id],header[id]{scroll-margin-top:78px}
   h2{font-size:26px;margin-bottom:10px;letter-spacing:-.3px}
   .lead{color:var(--muted);margin-bottom:24px}
 
   /* method cards */
-  .methods{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+  .methods{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch}
   @media(max-width:860px){.methods{grid-template-columns:1fr}}
-  .method{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+  .method{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column}
   .method.primary{border-color:#86efac;box-shadow:0 6px 24px -14px rgba(5,150,105,.5)}
-  .method h3{font-size:18px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .method h3{font-size:18px;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .method p{font-size:14px;color:var(--muted);margin-bottom:12px}
+  .method .foot{margin-top:auto;padding-top:8px}
   .badge{font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:2px 9px;border-radius:99px;letter-spacing:.3px}
   .method .btn{margin-top:4px}
 
   /* mini compare table */
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius)}
+  .tblhint{display:none;font-size:12px;color:var(--muted);margin-top:8px}
+  @media(max-width:720px){.tblwrap .tbl{min-width:600px}.tblhint{display:block}}
   table.tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:14px}
   .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
   .tbl th{background:var(--soft);color:var(--green-d);font-size:13px;font-weight:600}
@@ -91,11 +100,11 @@
   .tag.warn{background:#fff7ed;color:var(--warn);border-color:#fed7aa}
 
   /* copyable */
-  code{background:#eef4f1;border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:13px;font-family:ui-monospace,Consolas,monospace}
-  code.cp{cursor:pointer;transition:.15s;position:relative}
+  code{background:#eef4f1;border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:13px;font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+  code.cp{cursor:pointer;transition:.15s;position:relative;word-break:break-all}
   code.cp:hover{background:#d9f2e6;border-color:#86efac}
-  code.cp::after{content:"复制";font-size:10px;color:#94a3b8;margin-left:6px;opacity:0;transition:.15s}
-  code.cp:hover::after{opacity:1}
+  code.cp::after{content:"复制";display:none;font-size:10px;color:#94a3b8;margin-left:6px}
+  code.cp:hover::after{display:inline}
 
   /* steps */
   .steps{display:grid;gap:14px}
@@ -116,9 +125,9 @@
   .dns-sub{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px}
   .dns-sub h3{font-size:15px;margin-bottom:4px}
   .dns-sub .rows{display:grid;gap:10px;margin-top:12px}
-  .dns-sub .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
-  .dns-sub .row .lbl{flex:0 0 118px;color:var(--muted);font-size:13px}
-  .dns-sub .row .val{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#f1f5f9;border:1px solid var(--line);border-radius:8px;padding:5px 10px;word-break:break-all}
+  .dns-sub .row{display:grid;grid-template-columns:104px minmax(0,1fr) auto;align-items:center;gap:10px;font-size:14px}
+  .dns-sub .row .lbl{color:var(--muted);font-size:13px}
+  .dns-sub .row .val{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#f1f5f9;border:1px solid var(--line);border-radius:8px;padding:5px 10px;overflow-wrap:anywhere}
   .dns-sub .row button{border:0;background:var(--soft);color:var(--green-d);border:1px solid #bbf7d0;border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit}
   .dns-sub .row button:hover{background:#d1fae5}
 
@@ -163,12 +172,15 @@
 
   @media(max-width:640px){
     h1{font-size:28px}
-    header{padding:36px 0 26px}
+    header.wrap{padding-top:36px;padding-bottom:26px}
     nav .links{display:none}
-    section{padding:30px 0}
+    section.wrap{padding-top:30px;padding-bottom:30px}
     .modal{margin:0 auto}
     .overlay{padding:12px}
     .modal-body{max-height:52vh}
+    .dns-sub .row{grid-template-columns:minmax(0,1fr) auto;gap:6px}
+    .dns-sub .row .lbl{grid-column:1 / -1}
+    .cta .btn{width:100%;justify-content:center}
   }
 </style>
 </head>
@@ -206,19 +218,25 @@
       <h3><span class="badge">推荐</span>方法一：Windows 单文件 .bat</h3>
       <p>下载一个 <b>.bat 文件</b>（不是安装包，不用解压、不用装依赖），双击运行。它在<b>你自己的网络</b>上把每个候选 IP 的完整链路测一遍，把真正能用的写进 hosts，写完再逐个域名验一次。</p>
       <p class="muted small">单次 TLS 连接成功率约 70%，所以每个域名写 4 个不同网段的 IP —— 全挂概率从 9% 降到 0.8%。任何一条能通，页面就能开。</p>
-      <a class="btn btn-primary" href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">下载 L1-GitHub-Hosts.bat</a>
-      <p class="muted small" style="margin-top:12px">下载地址：<code class="cp">https://github.com/gooooddayy/L1-github-hosts/releases/latest</code></p>
+      <div class="foot" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <a class="btn btn-primary" href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">下载 L1-GitHub-Hosts.bat</a>
+        <button class="linkbtn" data-copy="https://github.com/gooooddayy/L1-github-hosts/releases/latest">复制下载链接</button>
+      </div>
     </div>
 
     <div class="method">
       <h3>方法二：在线实时 hosts 列表</h3>
       <p>什么都不用下载。打开列表，把现成的内容复制或下载下来，粘进系统 hosts 文件即可。</p>
       <p class="muted small">数据来自多个公开项目交叉验证，并按实测延迟分层排序。但它<b>不在你这台机器上测</b>，只能保证「大概率能用」，不能保证对你这根网线最优。</p>
-      <button class="btn btn-ghost" id="open-live-2">打开列表 / 复制 / 下载</button>
+      <p class="muted small">适合临时应急、不想运行程序，或者 Mac / Linux 用户。</p>
+      <div class="foot">
+        <button class="btn btn-ghost" id="open-live-2">打开列表 / 复制 / 下载</button>
+      </div>
     </div>
   </div>
 
-  <table class="tbl" style="margin-top:20px">
+  <div class="tblwrap" style="margin-top:20px">
+  <table class="tbl">
     <thead>
       <tr><th style="width:22%">对比项</th><th>方法一 · .bat</th><th>方法二 · 在线列表</th></tr>
     </thead>
@@ -231,6 +249,8 @@
       <tr><td>适合</td><td>长期使用、想一次配好</td><td>临时应急、不想运行程序、Mac / Linux 用户</td></tr>
     </tbody>
   </table>
+  </div>
+  <p class="tblhint">← 表格可左右滑动查看完整对比 →</p>
 </section>
 
 <section class="wrap" id="usage">
@@ -356,6 +376,7 @@
 <section class="wrap">
   <h2>和同类项目对比</h2>
   <p class="lead">不是贬低谁，只是技术路线不同。</p>
+  <div class="tblwrap">
   <table class="tbl">
     <thead>
       <tr><th>项目</th><th>数据来源</th><th>测速指标</th><th>测速位置</th><th>写入后校验</th></tr>
@@ -371,6 +392,7 @@
       <tr><td>SwitchHosts</td><td>手动 / 订阅</td><td>无</td><td>—</td><td>无</td></tr>
     </tbody>
   </table>
+  </div>
 </section>
 
 <section class="wrap" id="faq">
