@@ -1,0 +1,46 @@
+name: Update hosts
+
+on:
+  schedule:
+    # 每小时第 17 分钟跑一次（避开整点的 CI 高峰）
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/gen_hosts.py'
+      - '.github/workflows/update-hosts.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-hosts
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate docs/hosts.txt
+        run: python scripts/gen_hosts.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- docs/hosts.txt; then
+            echo "hosts.txt 无变化，跳过提交"
+          else
+            git add docs/hosts.txt
+            git commit -m "chore: refresh hosts.txt [skip ci]"
+            git push
+          fi
