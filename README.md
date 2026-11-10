@@ -6,7 +6,7 @@
 
 **[⬇ 下载 Windows 版（.bat 单文件）](https://github.com/gooooddayy/L1-github-hosts/releases/latest)** ·
 **[🌐 在线实时 hosts 列表](https://gooooddayy.github.io/L1-github-hosts/)** ·
-**[📖 使用步骤](#方法一使用步骤4-步)**
+**[📖 使用步骤](#下载与运行)**
 
 ---
 
@@ -26,29 +26,25 @@
 
 ---
 
-## 写入 hosts（4 步）
+## 下载与运行
 
 Windows 版就是**一个 `.bat` 文件**，不是安装包，不用解压，不用装任何运行库。
 
-### 1. 下载 `L1-GitHub-Hosts.bat`
+1. 下载 [`L1-GitHub-Hosts.bat`](https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat)
+   > 提示「此文件来自其他计算机」：右键文件 → 属性 → 勾选底部「解除锁定」→ 确定。这是 Windows 对下载文件的保护，任何未签名程序都会遇到。
+2. 双击运行，UAC 点「是」—— 写 hosts 必须管理员权限，只会弹这一次
+3. 点界面上的 **开始测速**，等 15～25 秒
 
-打开 [Releases](https://github.com/gooooddayy/L1-github-hosts/releases/latest)，下载 `L1-GitHub-Hosts.bat`。
+## 点「写入 hosts」之后
 
-> **提示「此文件来自其他计算机」怎么办**：右键文件 → 属性 → 勾选底部「解除锁定」→ 确定。这是 Windows 对下载文件的保护，任何未签名程序都会遇到。
+测速完成后点一下 **写入 hosts**，剩下的四件事工具自动做完，不用再手动操作：
 
-### 2. 双击运行，UAC 点「是」
+1. **自动备份** —— 把当前 hosts 复制成 `hosts.bak`，只保留一份，每次写入覆盖
+2. **写入 IP** —— 每域名 4 个、尽量来自不同网段，只动 `BEGIN` / `END` 标记之间的内容，其它行不碰
+3. **刷新本地系统 DNS** —— 自动执行 `ipconfig /flushdns`
+4. **逐个域名验证** —— 按系统实际解析结果跑完 TCP + TLS + 首字节，不通就换下一个 IP 重写，最多 3 轮
 
-因为要写 `C:\Windows\System32\drivers\etc\hosts`，这个文件必须管理员权限。只会弹这一次。界面出来后点 **开始测速**，等 15～25 秒。
-
-### 3. 点「写入 hosts」
-
-工具会依次做：备份原文件 → 写入测出的 IP（每域名 4 个）→ 刷新系统 DNS → **逐个域名验证真的能通**，不通就把下一个 IP 换上来重写。
-
-右上角提示「已写入并校验通过（10/10 个域名）」即成功。
-
-### 4. 刷新本地 DNS（必做）
-
-见下一节。
+右上角提示「已写入并校验通过（10/10 个域名）」即成功。之后如果还是打不开，去下一节手动再刷新一次 DNS。
 
 ---
 
