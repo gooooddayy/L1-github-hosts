@@ -2,8 +2,9 @@ name: Update hosts
 
 on:
   schedule:
-    # 每小时第 17 分钟跑一次（避开整点的 CI 高峰）
-    - cron: '17 * * * *'
+    # 每 30 分钟第 7 分钟跑一次。
+    # GitHub 的 cron 对低活跃仓库经常延迟甚至整点跳过，缩短间隔可提高实际执行率。
+    - cron: '7,37 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
