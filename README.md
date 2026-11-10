@@ -1,28 +1,104 @@
 # L1 GitHub Hosts
 
-> **更新 GitHub 最新 hosts · GitHub 访问加速 · 本机实测可用 IP**
+> **更新 GitHub 最新 hosts · GitHub 访问加速 · Windows 单文件 .bat**
 >
 > 解决 `github.com` 打不开、转圈、README 图片无法显示、`raw.githubusercontent.com` 加载失败。
 
-**[⬇ 下载 Windows 版](https://github.com/gooooddayy/L1-github-hosts/releases/latest)** ·
-**[🌐 在线实时 IP 列表](https://gooooddayy.github.io/L1-github-hosts/)** ·
-**[📖 使用说明](#快速开始3-步)**
+**[⬇ 下载 Windows 版（.bat 单文件）](https://github.com/gooooddayy/L1-github-hosts/releases/latest)** ·
+**[🌐 在线实时 hosts 列表](https://gooooddayy.github.io/L1-github-hosts/)** ·
+**[📖 使用步骤](#方法一使用步骤4-步)**
 
 ---
 
-## 这是什么
+## 先选一种用法
 
-一个 Windows 上的小工具，解决「GitHub 打不开、图片裂开、加载特别慢」的问题。
+| | **方法一 · Windows .bat**（推荐） | **方法二 · 在线实时列表** |
+|---|---|---|
+| 怎么用 | 下载一个 `.bat` 文件，双击运行 | 打开网页，复制或下载现成内容 |
+| 测速位置 | **你自己的电脑**，走你的宽带 | 第三方项目的机器 |
+| 成功率 | **高**：本机实测 + 写入后逐个域名校验，不通自动换 IP | 中：取决于源站数据和你线路是否匹配 |
+| 每域名 IP 数 | **4 个**，尽量来自不同网段 | 4 个，按共识与延迟分层 |
+| 需要什么 | 管理员权限（一次 UAC） | 无 |
+| 数据新鲜度 | 每次运行都是当次实测 | 源站与快照定时刷新，可能滞后几十分钟 |
+| 适合 | 长期使用 | 临时应急、不想运行程序、Mac / Linux |
 
-双击运行 → 在你自己的网络上实测每个候选 IP 的完整访问链路 → 挑出真正能用的写入 `hosts` → 写完再验证一遍，不通就自动换下一个。
+> **两种不要同时用。** 各自有独立的起止标记，同时存在会让同一域名有多条记录、互相抢优先级。
 
-和网上那些「复制一份 hosts 粘贴进去」的项目相比，最大的区别是：**它不用别人的测速结果，只在自己机器上测。**
+---
+
+## 方法一：使用步骤（4 步）
+
+Windows 版就是**一个 `.bat` 文件**，不是安装包，不用解压，不用装任何运行库。
+
+### 1. 下载 `L1-GitHub-Hosts.bat`
+
+打开 [Releases](https://github.com/gooooddayy/L1-github-hosts/releases/latest)，下载 `L1-GitHub-Hosts.bat`。
+
+> **提示「此文件来自其他计算机」怎么办**：右键文件 → 属性 → 勾选底部「解除锁定」→ 确定。这是 Windows 对下载文件的保护，任何未签名程序都会遇到。
+
+### 2. 双击运行，UAC 点「是」
+
+因为要写 `C:\Windows\System32\drivers\etc\hosts`，这个文件必须管理员权限。只会弹这一次。界面出来后点 **开始测速**，等 15～25 秒。
+
+### 3. 点「写入 hosts」
+
+工具会依次做：备份原文件 → 写入测出的 IP（每域名 4 个）→ 刷新系统 DNS → **逐个域名验证真的能通**，不通就把下一个 IP 换上来重写。
+
+右上角提示「已写入并校验通过（10/10 个域名）」即成功。
+
+### 4. 刷新本地 DNS（必做）
+
+见下一节。
+
+---
+
+## 刷新 DNS：本地那条是必做的
+
+hosts 改完，系统里还缓存着旧的解析结果。**刷新本地 DNS 才是关键动作**，浏览器那层只是补充。
+
+**① 本地 DNS（必做）** —— `Win + R` → 输入 `cmd` → 回车，粘贴：
+
+```
+ipconfig /flushdns
+```
+
+看到「已成功刷新 DNS 解析缓存」就完成了。
+
+**② 浏览器自己的缓存（打不开时再清）**
+
+| 浏览器 | 地址栏粘贴 | 然后点 |
+|---|---|---|
+| Chrome / Edge | `chrome://net-internals/#dns` | **Clear host cache** |
+| Firefox | `about:networking#dns` | **Clear DNS Cache** |
+
+> 网页不能直接跳转到 `chrome://`、`about:` 这类浏览器内部页（安全限制），在线页面上只提供**复制按钮**，粘到地址栏回车即可。最省事的办法其实是把浏览器完全关掉再打开。
+
+---
+
+## 方法二：在线实时 hosts 列表
+
+**[→ 打开在线列表](https://gooooddayy.github.io/L1-github-hosts/)**
+
+点页面上的「查看实时 hosts 列表」，会弹出窗口显示：
+
+- 每个域名推荐 4 个 IP，按「实测延迟分层 → 多源共识」排序
+- 数据更新时间 + 本次读取时间
+- **一键复制全部**（自动带好起止标记，粘到 hosts 末尾即可，不会叠加第二份）
+- 下载 `hosts.txt`
+
+快照直链（可直接下载或订阅）：
+
+```
+https://gooooddayy.github.io/L1-github-hosts/hosts.txt
+```
+
+> **注意**：在线列表是**多源交叉验证**的结果（几个独立项目都给出同一个 IP，说明它更可能稳定），**不是**在你机器上实测的。想要最适合自己线路的结果，用方法一。
+>
+> 仓库里的 `hosts.txt` 由 GitHub Actions 每小时自动刷新，原理与排序规则见 [docs/setup-workflow.md](docs/setup-workflow.md)。
 
 ---
 
 ## 为什么它比直接抄一份 hosts 更靠谱
-
-GitHub 在国内访问不稳，绝大多数人的做法是找一份别人维护好的 hosts 文件粘进系统。问题在于：
 
 | 别人的 hosts 文件 | 这个工具 |
 |---|---|
@@ -36,81 +112,6 @@ GitHub 在国内访问不稳，绝大多数人的做法是找一份别人维护�
 
 ---
 
-## 快速开始（3 步）
-
-### 1. 下载
-
-到 [Releases](https://github.com/gooooddayy/L1-github-hosts/releases/latest) 下载 `L1-GitHub-Hosts.bat`。
-
-> 只有一个文件，不需要安装，不需要解压，不依赖 .NET 以外的任何运行库。
-
-**如果 Windows 提示「此文件来自其他计算机」**：右键文件 → 属性 → 勾选底部的「解除锁定」→ 确定。这是 Windows 对下载文件的默认保护，任何未签名程序都会遇到。
-
-### 2. 双击，点「是」
-
-会弹一次 UAC 提权窗口 —— 因为要修改 `C:\Windows\System32\drivers\etc\hosts`，这个文件必须管理员权限才能写。
-
-点「是」之后界面就出来了，点 **开始测速**，等 15～25 秒。
-
-### 3. 写入并校验
-
-点 **写入 hosts**。工具会：
-
-1. 备份原文件到 `hosts.bak`
-2. 写入测出来的 IP（每个域名 4 个，来自不同网段）
-3. 刷新 DNS 缓存
-4. **逐个域名验证真的能通**，不通就自动换下一个 IP 重写
-
-看到右上角提示「已写入并校验通过（10/10 个域名）」，就可以打开浏览器试了。
-
----
-
-## 浏览器 DNS 缓存：最后一步，很多人卡在这
-
-系统 DNS 刷新了，但 **浏览器有自己的 DNS 缓存**，不清的话还是走旧 IP。
-
-**Chrome / Edge** —— 地址栏粘贴下面这行，回车后点 **Clear host cache**
-
-```
-chrome://net-internals/#dns
-```
-
-**Firefox** —— 地址栏粘贴下面这行，回车后点 **Clear DNS Cache**
-
-```
-about:networking#dns
-```
-
-**系统级** —— `Win + R` 输入 `cmd` 回车，再粘贴下面这行
-
-```
-ipconfig /flushdns
-```
-
-> ⚠️ `chrome://` 和 `about:` 这类内部页面**不允许网页直接跳转**（浏览器安全限制），所以在线页面上的按钮是「复制链接」，粘到地址栏回车即可。
-
-最简单粗暴的办法：**把浏览器完全关掉再打开**，缓存自然就没了。
-
----
-
-## 实时 hosts 列表
-
-**[→ 打开在线实时列表](https://gooooddayy.github.io/L1-github-hosts/)**
-
-页面会实时拉取多个公开源，按「被几个源同时认可」排序展示，同时给出可直接复制的 hosts 片段：
-
-```
-https://gooooddayy.github.io/L1-github-hosts/hosts.txt
-```
-
-> **注意**：在线列表是**多源交叉验证**的结果（几个独立项目都给出同一个 IP，说明它更可能稳定），**不是**在你机器上实测的。
->
-> 想要真正适合你自己线路的结果，请用桌面版工具——那才是本机实测。
-
-<sub>仓库里的 `hosts.txt` 由 GitHub Actions 每小时自动刷新，原理与排序规则见 [docs/setup-workflow.md](docs/setup-workflow.md)。</sub>
-
----
-
 ## 常见问题
 
 <details>
@@ -118,11 +119,20 @@ https://gooooddayy.github.io/L1-github-hosts/hosts.txt
 
 按可能性排序：
 
-1. **浏览器缓存没清** —— 见上面那一节，最常见
-2. **hosts 里有重复条目** —— 别的工具写过同一域名，排在前面抢走解析。点工具里的「恢复初始」清干净再写入
-3. **IP 已经失效** —— hosts 是静态快照，IP 会随 GitHub 的调度变化。重新跑一次工具
-4. **网络环境变了** —— 换了 WiFi、开了代理、运营商调整，都会让旧结果失效
+1. **本地 DNS 没刷新** —— 命令行执行 `ipconfig /flushdns`
+2. **浏览器缓存没清** —— 见上面那一节，或把浏览器完全关掉重开
+3. **hosts 里有重复条目** —— 别的工具写过同一域名，排在前面抢走解析。点工具里的「恢复初始」清干净再写入
+4. **IP 已经失效** —— hosts 是静态快照，IP 会随 GitHub 的调度变化。重新跑一次工具
 5. **域名本身被污染** —— 例如 `gist.github.com`，DNS 解析结果完全不是 GitHub 的 IP，这类域名 hosts 解决不了
+
+</details>
+
+<details>
+<summary><b>两种方法可以一起用吗？</b></summary>
+
+不要。方法二复制的内容自带独立的起止标记，和方法一写的那段是两套，同时存在会让同一个域名有多条记录、互相抢优先级。
+
+选一种就好。切换前把另一套删掉，或点工具里的「恢复初始」。
 
 </details>
 
@@ -154,7 +164,7 @@ Windows 按 hosts 文件顺序返回地址，Chrome 和 curl 在首个地址连�
 
 因为网络本身在变。同一个 IP，我实测过两次间隔两分钟，TLS 握手从 447ms 变成 2424ms。
 
-这不是工具不稳定，是它如实反映了你当前network的状况。也正因如此，**不建议长期沿用一份旧的 hosts**。
+这不是工具不稳定，是它如实反映了你当前网络的状况。也正因如此，**不建议长期沿用一份旧的 hosts**。
 
 </details>
 
@@ -170,7 +180,7 @@ Windows 按 hosts 文件顺序返回地址，Chrome 和 curl 在首个地址连�
 <details>
 <summary><b>360 / 火绒 报毒怎么办？</b></summary>
 
-工具是纯文本的 `.bat` + PowerShell 脚本，没有任何二进制文件，源码在 [`src/`](src/) 里可以直接看。
+工具是纯文本的 `.bat`，里面内嵌的是 PowerShell 脚本，没有任何二进制文件，源码在 [`src/`](src/) 里可以直接看。
 
 但「修改 hosts」是杀毒软件的重点监控行为，可能被拦截。如果写入失败，日志里会明确告诉你是「没有权限」还是「文件被占用」。临时退出安全软件再写入即可。
 
@@ -195,7 +205,7 @@ TCP 握手在国内会被中间设备代答，测出来常常是 1ms 的假值 �
 
 ## 技术细节
 
-- 单文件 `.bat`，内嵌完整 PowerShell 脚本，解压到 `%TEMP%` 后运行
+- 单文件 `.bat`，内嵌完整 PowerShell 脚本，运行时释放到 `%TEMP%` 再执行
 - 界面用 WinForms，不依赖任何第三方组件
 - 测速用裸 socket + SslStream，**不走系统代理**，测的是真实路径
 - 强制 TLS 1.2+，兼容 Windows 7/8 的旧版 .NET
