@@ -1,25 +1,27 @@
-# 启用 hosts.txt 自动刷新（可选）
+# hosts.txt 自动刷新
 
-仓库里的 `docs/hosts.txt` 是网站和下载链接的数据源。
+仓库里的 `docs/hosts.txt` 是网站「下载 hosts.txt」的数据源，**目前由 `.github/workflows/update-hosts.yml` 每小时自动刷新**（每小时第 17 分钟）。
 
-**目前它是手动生成的快照**，因为创建它的令牌没有 `workflow` 权限，无法通过 API 添加 `.github/workflows/update-hosts.yml`。
+页面本身不依赖这个快照 —— 打开页面时会直接向 2 个公开源实时拉取。快照的作用是兜底（源站全部不可达时）和提供可下载的文件。
 
-页面本身不依赖这个快照 —— 打开页面时会直接向 2 个公开源实时拉取。快照只作为兜底（源站全部不可达时使用）和「下载 hosts.txt」的内容。
+## 验证是否在跑
 
----
+1. 打开仓库的 **Actions** 标签页
+2. 左侧选 **Update hosts**
+3. 应该能看到每次运行记录；点 **Run workflow** 可以手动触发一次
+4. 跑完后 `docs/hosts.txt` 开头的「更新时间」会变
 
-## 方式一：重新授权（推荐，一步到位）
+## 如果哪天失效了
 
-1. 打开 https://github.com/settings/tokens
-2. 找到当前令牌 → 勾选 **`workflow`** 权限 → 更新
-   （或者新建一个，勾选 `repo` + `workflow`）
-3. 把新令牌交给维护者，或者自己执行下面的方式二
+工作流需要令牌具备 `workflow` 权限才能创建。如果你重新初始化了仓库，按下面的方式加回去即可。
 
----
+### 方式一：用带 `workflow` 权限的令牌（一步到位）
 
-## 方式二：网页上手动添加（不需要任何权限）
+令牌需要同时勾选 **`repo`** 和 **`workflow`** 两个权限。
 
-1. 打开 https://github.com/gooooddayy/L1-github-hosts
+### 方式二：网页上手动添加（不需要任何权限）
+
+1. 打开仓库首页
 2. 点 **Add file → Create new file**
 3. 文件名填：`.github/workflows/update-hosts.yml`
 4. 粘贴下面全部内容
