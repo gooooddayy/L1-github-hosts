@@ -1,0 +1,13 @@
+# 系统
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 构建中间产物
+*.zip
+*.tmp
+*.log
+
+# 本地测试产物
+GitHub可用IP_*.txt
+hosts.bak

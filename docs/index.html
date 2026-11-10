@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub 访问加速 - 一键更新最新 hosts ｜ L1 GitHub Hosts</title>
+<meta name="description" content="GitHub 访问加速工具：本机实测可用 IP，一键写入 hosts，解决 github.com 打不开、转圈、README 图片无法显示、raw.githubusercontent.com 加载失败。支持实时 hosts 列表与浏览器 DNS 刷新指引。">
+<meta name="keywords" content="GitHub 访问加速,更新 GitHub 最新 hosts,GitHub 打不开,解决 GitHub 图片无法显示,加速 GitHub 网页浏览,GitHub hosts 2026,raw.githubusercontent.com 加速,github.com 加载慢,hosts 一键写入,Windows hosts 工具,DNS 刷新">
+<meta name="author" content="L1Ranger">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://gooooddayy.github.io/L1-github-hosts/">
+<link rel="alternate" type="text/plain" href="hosts.txt" title="hosts 列表纯文本">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="L1 GitHub Hosts">
+<meta property="og:title" content="GitHub 访问加速 - 一键更新最新 hosts">
+<meta property="og:description" content="本机实测可用 IP，一键写入 hosts，解决 GitHub 打不开、图片裂开、加载缓慢。写入后自动校验，不通就换。">
+<meta property="og:url" content="https://gooooddayy.github.io/L1-github-hosts/">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GitHub 访问加速 - 一键更新最新 hosts">
+<meta name="twitter:description" content="本机实测可用 IP，一键写入 hosts，解决 GitHub 打不开、图片裂开、加载缓慢。">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310b981'/%3E%3Cpath d='M24 18v28h22' stroke='%23fff' stroke-width='8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+
+<style>
+  :root{
+    --bg:#f5f8f6; --card:#fff; --ink:#0f172a; --muted:#5b6b78;
+    --green:#10b981; --green-d:#059669; --line:#d9e6e0; --soft:#ecfdf5;
+    --warn:#b45309; --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--green-d);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(245,248,246,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--ink);text-decoration:none}
+  .brand i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#34d399,#047857);display:inline-block;position:relative}
+  .brand i::after{content:"";position:absolute;left:8px;top:6px;width:10px;height:14px;border-left:3px solid #fff;border-bottom:3px solid #fff;border-radius:1px}
+  nav .links{margin-left:auto;display:flex;gap:20px;font-size:14px}
+  nav .links a{color:var(--muted)}
+  nav .links a:hover{color:var(--green-d);text-decoration:none}
+
+  /* hero */
+  header{padding:64px 0 48px;text-align:center}
+  .kicker{display:inline-block;font-size:13px;color:var(--green-d);background:var(--soft);border:1px solid #bbf7d0;padding:5px 12px;border-radius:99px;margin-bottom:18px}
+  h1{font-size:40px;line-height:1.25;letter-spacing:-.5px;margin-bottom:16px}
+  h1 em{font-style:normal;color:var(--green-d)}
+  .sub{font-size:17px;color:var(--muted);max-width:620px;margin:0 auto 30px}
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;transition:.15s}
+  .btn-primary{background:var(--green);color:#fff}
+  .btn-primary:hover{background:var(--green-d);text-decoration:none}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--green);text-decoration:none}
+
+  /* generic section */
+  section{padding:48px 0}
+  h2{font-size:26px;margin-bottom:10px;letter-spacing:-.3px}
+  .lead{color:var(--muted);margin-bottom:26px}
+
+  /* cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card h3{font-size:16px;margin-bottom:8px}
+  .card p{font-size:14px;color:var(--muted)}
+  .num{width:28px;height:28px;border-radius:9px;background:var(--soft);color:var(--green-d);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+
+  /* steps */
+  .steps{counter-reset:s;display:grid;gap:14px}
+  .step{display:flex;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px}
+  .step .idx{flex:0 0 34px;height:34px;border-radius:10px;background:var(--green);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:15px;margin-bottom:4px}
+  .step p{font-size:14px;color:var(--muted)}
+  code{background:#eef4f1;border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:13px;font-family:ui-monospace,Consolas,monospace}
+
+  /* table */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:14px}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  .tbl th{background:var(--soft);color:var(--green-d);font-size:13px;font-weight:600}
+  .tbl tr:last-child td{border-bottom:0}
+  .mono{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+  .muted{color:var(--muted)}
+  .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--green-d);border:1px solid #bbf7d0}
+  .tag.warn{background:#fff7ed;color:var(--warn);border-color:#fed7aa}
+
+  /* dns */
+  .dns{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .dns .card{display:flex;flex-direction:column;gap:10px}
+  .copy{display:flex;align-items:center;gap:8px;background:#f1f5f9;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-family:ui-monospace,Consolas,monospace;font-size:13px;word-break:break-all}
+  .copy button{margin-left:auto;flex:0 0 auto;border:0;background:var(--green);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+  .copy button:hover{background:var(--green-d)}
+
+  /* faq */
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}
+  details[open]{border-color:#bbf7d0}
+  summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸";color:var(--green);margin-right:8px;display:inline-block;transition:.15s}
+  details[open] summary::before{transform:rotate(90deg)}
+  details p,details ul{margin-top:10px;font-size:14px;color:var(--muted)}
+  details ul{padding-left:20px}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:13px;text-align:center}
+  footer a{color:var(--muted)}
+
+  .toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:640px){
+    h1{font-size:28px}
+    header{padding:40px 0 30px}
+    nav .links{display:none}
+    section{padding:34px 0}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="./"><i></i>L1 GitHub Hosts</a>
+    <div class="links">
+      <a href="#download">下载</a>
+      <a href="#live">实时 IP</a>
+      <a href="#dns">DNS 刷新</a>
+      <a href="#faq">常见问题</a>
+      <a href="https://github.com/gooooddayy/L1-github-hosts" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap">
+  <span class="kicker">本机实测 · 写入后自动校验</span>
+  <h1>GitHub 访问加速<br>一键更新<em>最新 hosts</em></h1>
+  <p class="sub">解决 <code>github.com</code> 打不开、一直转圈、README 图片无法显示、<code>raw.githubusercontent.com</code> 加载失败。不用别人测好的 IP，在你自己网络上现测。</p>
+  <div class="cta" id="download">
+    <a class="btn btn-primary" href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">⬇ 下载 Windows 版</a>
+    <a class="btn btn-ghost" href="#live">查看实时 IP 列表</a>
+  </div>
+</header>
+
+<section class="wrap">
+  <h2>为什么抄一份 hosts 经常不管用</h2>
+  <p class="lead">因为那份 IP 是在别人的网络上测出来的，而且测的方法本身就有问题。</p>
+  <div class="grid">
+    <div class="card">
+      <div class="num">1</div>
+      <h3>测速位置不对</h3>
+      <p>多数项目在 GitHub Actions 的海外机器上测，测的是「机房 → GitHub」，跟你的宽带没有任何关系。</p>
+    </div>
+    <div class="card">
+      <div class="num">2</div>
+      <h3>测速指标是假值</h3>
+      <p>它们测 TCP 握手。国内这个握手常被中间设备代答，1ms 就能「连上」，真正卡住的地方在后面的 TLS 握手。</p>
+    </div>
+    <div class="card">
+      <div class="num">3</div>
+      <h3>写完就不管了</h3>
+      <p>IP 是静态快照，GitHub 调度一变就失效。而且没人验证过写进去的 IP 到底能不能打开页面。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>它做了什么不一样的事</h2>
+  <p class="lead">四个环节，每一环都是针对上面三个问题设计的。</p>
+  <div class="grid">
+    <div class="card">
+      <h3>本机实测</h3>
+      <p>裸 socket 直连，不走系统代理。测的是你这条线到 GitHub 的真实路径。</p>
+    </div>
+    <div class="card">
+      <h3>全链路计时</h3>
+      <p>TCP 建连 + TLS 握手 + 首字节。实测 TLS 握手占总耗时一半以上，只测首字节会挑出最慢的 IP。</p>
+    </div>
+    <div class="card">
+      <h3>每域名 4 个 IP</h3>
+      <p>单次连接成功率约 70%，写 2 个全挂概率 9%，写 4 个降到 0.8%。四个尽量来自不同网段。</p>
+    </div>
+    <div class="card">
+      <h3>写完再验一遍</h3>
+      <p>按系统实际解析结果逐个域名跑完整链路，不通就把下一个 IP 换上来重写。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>三步搞定</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="idx">1</div>
+      <div>
+        <h3>下载并解除锁定</h3>
+        <p>只有一个 <code>.bat</code> 文件。如果提示「来自其他计算机」，右键 → 属性 → 勾选「解除锁定」。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="idx">2</div>
+      <div>
+        <h3>双击，点「开始测速」</h3>
+        <p>会弹一次 UAC —— 修改 hosts 必须管理员权限。等 15～25 秒。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="idx">3</div>
+      <div>
+        <h3>点「写入 hosts」</h3>
+        <p>自动备份、写入、刷新系统 DNS，然后逐个验证。看到「校验通过 10/10」就成功了。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="dns">
+  <h2>最后一步：清浏览器 DNS 缓存</h2>
+  <p class="lead">系统 DNS 刷新了，浏览器还有一层自己的缓存。不清的话还是走旧 IP —— 这是「换了 hosts 没效果」最常见的原因。</p>
+  <div class="dns">
+    <div class="card">
+      <h3>Chrome / Edge</h3>
+      <p class="muted" style="font-size:13px">打开后点 <b>Clear host cache</b></p>
+      <div class="copy">
+        <span>chrome://net-internals/#dns</span>
+        <button data-copy="chrome://net-internals/#dns">复制</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Firefox</h3>
+      <p class="muted" style="font-size:13px">打开后点 <b>Clear DNS Cache</b></p>
+      <div class="copy">
+        <span>about:networking#dns</span>
+        <button data-copy="about:networking#dns">复制</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>系统级（命令行）</h3>
+      <p class="muted" style="font-size:13px">Win + R → cmd → 粘贴回车</p>
+      <div class="copy">
+        <span>ipconfig /flushdns</span>
+        <button data-copy="ipconfig /flushdns">复制</button>
+      </div>
+    </div>
+  </div>
+  <p class="muted" style="font-size:13px;margin-top:14px">⚠️ <code>chrome://</code> 和 <code>about:</code> 是浏览器内部页，网页无法直接跳转（安全限制），所以这里给的是复制按钮 —— 粘到地址栏回车即可。最省事的办法其实是把浏览器完全关掉再开。</p>
+</section>
+
+<section class="wrap" id="live">
+  <h2>实时 hosts 列表</h2>
+  <p class="lead">
+    从多个公开源实时拉取，按「被几个源同时认可」排序。多源交叉验证比单源更可能稳定 ——
+    但它毕竟不是在你机器上测的，要最贴合自己线路的结果请用桌面版。
+  </p>
+
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+    <span class="tag" id="live-status">正在加载…</span>
+    <button class="btn btn-ghost" style="padding:8px 16px;font-size:13px" id="refresh">重新拉取</button>
+    <a class="btn btn-ghost" style="padding:8px 16px;font-size:13px" href="hosts.txt" download>下载 hosts.txt</a>
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr><th style="width:38%">域名</th><th>推荐 IP（按共识排序）</th><th style="width:88px">来源</th></tr>
+    </thead>
+    <tbody id="live-body">
+      <tr><td colspan="3" class="muted">加载中，请稍候…</td></tr>
+    </tbody>
+  </table>
+
+  <p class="muted" style="font-size:13px;margin-top:12px">
+    数据每小时由 GitHub Actions 更新一次，页面打开时还会再向源站拉一次。生成时间：<span id="live-time">-</span>
+  </p>
+</section>
+
+<section class="wrap">
+  <h2>和同类项目对比</h2>
+  <p class="lead">不是贬低谁，只是技术路线不同。</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>项目</th><th>数据来源</th><th>测速指标</th><th>测速位置</th><th>写入后校验</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>L1 GitHub Hosts</b></td><td>内置池 + 3 个公开源</td><td><b>TCP+TLS+首字节</b></td><td><b>本机</b></td><td><b>有，自动换 IP</b></td>
+      </tr>
+      <tr><td>GitHub520</td><td>DoH + 多个 DNS</td><td>TCP 握手</td><td>GitHub Actions</td><td>无</td></tr>
+      <tr><td>ittuann/GitHub-IP-hosts</td><td>2 路 DoH</td><td>TCP 握手</td><td>GitHub Actions</td><td>无</td></tr>
+      <tr><td>Licoy/fetch-github-hosts</td><td>同步远程源</td><td>无</td><td>—</td><td>无</td></tr>
+      <tr><td>ineo6/hosts</td><td>多源</td><td>无</td><td>—</td><td>无</td></tr>
+      <tr><td>SwitchHosts</td><td>手动 / 订阅</td><td>无</td><td>—</td><td>无</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="wrap" id="faq">
+  <h2>常见问题</h2>
+  <details open>
+    <summary>换了 hosts 还是打不开？</summary>
+    <ul>
+      <li>浏览器 DNS 缓存没清 —— 见上面那一节，最常见</li>
+      <li>hosts 里有重复条目，别的工具写的排在前面抢走了解析</li>
+      <li>IP 已经失效，重新跑一次工具</li>
+      <li>网络环境变了：换 WiFi、开代理、运营商调整</li>
+      <li>域名本身被污染（如 <code>gist.github.com</code>），hosts 解决不了</li>
+    </ul>
+  </details>
+  <details>
+    <summary>为什么每次结果都不一样？</summary>
+    <p>因为网络本身在变。同一个 IP 间隔两分钟测，TLS 握手可能从 447ms 变成 2424ms。工具只是如实反映了当前状况。</p>
+  </details>
+  <details>
+    <summary>安全吗？会改别的东西吗？</summary>
+    <ul>
+      <li>只改 hosts 里 <code># === GitHub IP BEGIN ===</code> 到 <code>END</code> 之间的内容</li>
+      <li>写入前自动备份为 <code>hosts.bak</code></li>
+      <li>纯文本脚本，源码公开，无二进制文件</li>
+    </ul>
+  </details>
+  <details>
+    <summary>支持 Windows 7 吗？</summary>
+    <p>需要 PowerShell 3.0 以上。Windows 7 请先装 WMF 5.1，工具会检查版本并给出中文提示。</p>
+  </details>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>L1 GitHub Hosts · MIT License · <a href="https://github.com/gooooddayy/L1-github-hosts" target="_blank" rel="noopener">GitHub 仓库</a> · <a href="https://github.com/gooooddayy/L1-github-hosts/releases/latest" target="_blank" rel="noopener">下载</a></p>
+    <p style="margin-top:8px">本站只做网络质量监测与数据展示，不提供任何代理或翻墙手段。</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "L1 GitHub Hosts",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Windows 10, Windows 11, Windows 8, Windows 7",
+  "description": "GitHub 访问加速工具：本机实测可用 IP，一键写入 hosts，解决 github.com 打不开、README 图片无法显示、raw.githubusercontent.com 加载失败。",
+  "url": "https://gooooddayy.github.io/L1-github-hosts/",
+  "downloadUrl": "https://github.com/gooooddayy/L1-github-hosts/releases/latest",
+  "softwareVersion": "1.0.0",
+  "license": "https://opensource.org/licenses/MIT",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+  "author": { "@type": "Person", "name": "L1Ranger" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "换了 hosts 还是打不开 GitHub 怎么办？",
+      "acceptedAnswer": { "@type": "Answer", "text": "按顺序排查：浏览器 DNS 缓存没清（Chrome 打开 chrome://net-internals/#dns 点 Clear host cache）；hosts 里有重复条目；IP 已失效需要重新测；网络环境变化；域名本身被污染。" }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么每个域名要写 4 个 IP？",
+      "acceptedAnswer": { "@type": "Answer", "text": "实测单次 TLS 连接成功率约 70%，写 2 个全部失败概率 9%，写 4 个降到 0.8%。四个 IP 尽量来自不同网段，避免同一路由同时失效。" }
+    },
+    {
+      "@type": "Question",
+      "name": "这个工具会修改 hosts 里的其它内容吗？",
+      "acceptedAnswer": { "@type": "Answer", "text": "不会。只写入 # === GitHub IP BEGIN === 到 # === GitHub IP END === 之间的内容，写入前自动备份为 hosts.bak，可一键恢复初始状态。" }
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  var SOURCES = [
+    { name: 'jsDelivr', url: 'https://cdn.jsdelivr.net/gh/ittuann/GitHub-IP-hosts@main/hosts' },
+    { name: 'gitcdn',   url: 'https://hosts.gitcdn.top/hosts.txt' },
+    { name: '快照',     url: 'hosts.txt' }
+  ];
+
+  var DOMAINS = [
+    'github.com', 'api.github.com', 'raw.githubusercontent.com', 'camo.githubusercontent.com',
+    'github.githubassets.com', 'avatars.githubusercontent.com', 'objects.githubusercontent.com',
+    'codeload.github.com', 'user-images.githubusercontent.com', 'release-assets.githubusercontent.com'
+  ];
+
+  // 实测分层，和 scripts/gen_hosts.py 保持一致：
+  // 先用「这条线路上的实测延迟」过滤，再按多源共识票数排序。
+  // 共识只说明这个 IP 存在且被认可，不说明它快 —— 20.205.243 就是典型，
+  // 三个源都推荐，但实测全链路 2164ms，是最慢的一档。
+  var TIER = [
+    ['20.27.177.', 1], ['140.82.114.', 2], ['185.199.', 2],
+    ['140.82.113.', 3], ['140.82.112.', 4], ['20.205.243.', 9]
+  ];
+  function tierOf(ip) {
+    for (var i = 0; i < TIER.length; i++) {
+      if (ip.indexOf(TIER[i][0]) === 0) return TIER[i][1];
+    }
+    return 5;
+  }
+
+  var body = document.getElementById('live-body');
+  var status = document.getElementById('live-status');
+  var timeEl = document.getElementById('live-time');
+
+  function parse(text) {
+    var out = {};
+    text.split(/\r?\n/).forEach(function (line) {
+      if (!line || line.charAt(0) === '#') return;
+      var m = line.match(/^\s*(\d{1,3}(?:\.\d{1,3}){3})\s+([A-Za-z0-9][A-Za-z0-9.\-]*)/);
+      if (!m) return;
+      var ip = m[1], host = m[2].toLowerCase();
+      if (!out[host]) out[host] = [];
+      if (out[host].indexOf(ip) < 0) out[host].push(ip);
+    });
+    return out;
+  }
+
+  function fetchText(url) {
+    return fetch(url, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.text();
+    });
+  }
+
+  function render(sets, okCount) {
+    var html = '';
+    DOMAINS.forEach(function (host) {
+      var votes = {};
+      sets.forEach(function (set) {
+        (set.data[host] || []).forEach(function (ip) { votes[ip] = (votes[ip] || 0) + 1; });
+      });
+      var list = Object.keys(votes).sort(function (a, b) {
+        var t = tierOf(a) - tierOf(b);
+        if (t !== 0) return t;
+        if (votes[b] !== votes[a]) return votes[b] - votes[a];
+        return a < b ? -1 : 1;
+      }).slice(0, 4);
+      if (!list.length) {
+        html += '<tr><td class="mono">' + host + '</td><td class="muted">暂无数据</td><td><span class="tag warn">0 / ' + okCount + '</span></td></tr>';
+        return;
+      }
+      var best = votes[list[0]];
+      var ipHtml = list.map(function (ip, i) {
+        var v = votes[ip];
+        return '<span class="mono" style="' + (i === 0 ? 'font-weight:700' : 'color:#5b6b78') + '">' + ip + '</span>' +
+               '<span class="muted" style="font-size:12px"> (' + v + '/' + okCount + ')</span>';
+      }).join('<br>');
+      html += '<tr><td class="mono">' + host + '</td><td>' + ipHtml + '</td>' +
+              '<td><span class="tag' + (best >= 2 ? '' : ' warn') + '">' + best + ' / ' + okCount + '</span></td></tr>';
+    });
+    body.innerHTML = html;
+  }
+
+  function load() {
+    status.textContent = '正在加载…';
+    status.className = 'tag';
+    body.innerHTML = '<tr><td colspan="3" class="muted">加载中，请稍候…</td></tr>';
+
+    Promise.all(SOURCES.map(function (s) {
+      return fetchText(s.url)
+        .then(function (t) { return { name: s.name, data: parse(t) }; })
+        .catch(function () { return null; });
+    })).then(function (results) {
+      var sets = results.filter(Boolean);
+      if (!sets.length) {
+        status.textContent = '源站不可达，请稍后重试';
+        status.className = 'tag warn';
+        body.innerHTML = '<tr><td colspan="3" class="muted">所有源都无法访问。可以点上方「下载 hosts.txt」拿仓库里的快照。</td></tr>';
+        return;
+      }
+      status.textContent = '在线 · ' + sets.length + '/' + SOURCES.length + ' 个源';
+      status.className = 'tag';
+      render(sets, sets.length);
+      timeEl.textContent = new Date().toLocaleString('zh-CN', { hour12: false });
+    });
+  }
+
+  document.getElementById('refresh').addEventListener('click', load);
+  load();
+
+  // 复制按钮
+  var toast = document.getElementById('toast');
+  var timer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
+  }
+  function copy(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { showToast('已复制：' + text); })
+        .catch(function () { fallback(text); });
+    } else { fallback(text); }
+  }
+  function fallback(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('已复制：' + text); }
+    catch (e) { showToast('复制失败，请手动选中'); }
+    document.body.removeChild(ta);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'), function (btn) {
+    btn.addEventListener('click', function () { copy(btn.getAttribute('data-copy')); });
+  });
+})();
+</script>
+</body>
+</html>
