@@ -448,8 +448,8 @@
 
     <div class="modal-meta">
       <span class="tag" id="live-status">正在加载…</span>
-      <span class="muted small">数据更新：<b id="src-time">-</b></span>
-      <span class="muted small">本次读取：<b id="fetch-time">-</b></span>
+      <span class="muted small">源站更新：<b id="src-time">-</b></span>
+      <span class="muted small">本次拉取：<b id="fetch-time">-</b></span>
     </div>
 
     <div class="modal-body">
@@ -472,7 +472,7 @@
     <div class="modal-note">
       <p>复制的内容已经带好起止标记，直接粘到 hosts 文件末尾保存即可，不会再叠加第二份。</p>
       <p>⚠️ 不要和方法一同时使用。如果之前用过 .bat，先在工具里点「恢复初始」，再粘这一段。</p>
-      <p class="muted">数据来自 GitHub520 / ittuann / Licoy 等公开项目，按「实测延迟分层 → 多源共识」排序。下载的文件由当前页面数据即时生成，文件头时间就是本次读取时间。</p>
+      <p class="muted">数据来自 GitHub520 / ittuann / Licoy 等公开项目，按「实测延迟分层 → 多源共识」排序。点「重新拉取」会立刻向这 3 个源重新请求一次（绕过缓存）；下载的文件由当前页面数据即时生成，文件头时间就是本次拉取时间。</p>
     </div>
   </div>
 </div>
@@ -625,8 +625,21 @@
     body.innerHTML = html;
   }
 
-  function load() {
-    status.textContent = '正在加载…';
+  // manual = 用户点了「重新拉取」，需要把过程明确反馈出来
+  function load(manual) {
+    var btn = document.getElementById('refresh');
+    if (manual && btn) {
+      btn.disabled = true;
+      btn.textContent = '拉取中…';
+    }
+    function restoreBtn() {
+      if (manual && btn) {
+        btn.disabled = false;
+        btn.textContent = '重新拉取';
+      }
+    }
+
+    status.textContent = manual ? '正在重新拉取…' : '正在加载…';
     status.className = 'tag';
     body.innerHTML = '<tr><td colspan="3" class="muted">加载中，请稍候…</td></tr>';
 
@@ -641,9 +654,12 @@
         status.textContent = '源站不可达';
         status.className = 'tag warn';
         srcTime.textContent = '-';
+        fetchTime.textContent = now();
         body.innerHTML = '<tr><td colspan="3" class="muted">所有源都无法访问。可以点下面「下载 hosts.txt」拿仓库里的快照。</td></tr>';
         state.rows = [];
         state.loaded = false;
+        restoreBtn();
+        if (manual) showToast('重新拉取失败：3 个源都不可达');
         return;
       }
 
@@ -658,6 +674,11 @@
       var stamps = sets.map(function (s) { return s.stamp; }).filter(Boolean).sort();
       srcTime.textContent = stamps.length ? stamps[stamps.length - 1] : '见源站';
       fetchTime.textContent = now();
+      restoreBtn();
+
+      if (manual) {
+        showToast('已重新拉取 ' + okCount + ' 个源 · ' + now());
+      }
     });
   }
 
@@ -699,7 +720,7 @@
   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
-  document.getElementById('refresh').addEventListener('click', load);
+  document.getElementById('refresh').addEventListener('click', function () { load(true); });
 
   // 下载走浏览器本地生成，内容与「复制全部」一致，
   // 文件头的时间就是本次读取时间，不会因为仓库快照没刷新而过期。
@@ -715,7 +736,7 @@
     document.body.appendChild(a);
     a.click();
     setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
-    showToast('已生成 hosts.txt（本次读取 ' + now() + '）');
+    showToast('已生成 hosts.txt（本次拉取 ' + now() + '）');
   });
   document.getElementById('copy-all').addEventListener('click', function () {
     var txt = buildBlock();
