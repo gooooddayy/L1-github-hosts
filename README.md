@@ -95,6 +95,8 @@ https://gooooddayy.github.io/L1-github-hosts/hosts.txt
 >
 > 想要真正适合你自己线路的结果，请用桌面版工具——那才是本机实测。
 
+<sub>仓库里的 `hosts.txt` 目前是手动快照；需要自动刷新可启用 Actions，步骤见 [docs/setup-workflow.md](docs/setup-workflow.md)。</sub>
+
 ---
 
 ## 常见问题
