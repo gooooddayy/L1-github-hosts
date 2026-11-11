@@ -335,3 +335,123 @@ Win7 自带 PowerShell 2.0，而脚本用了 `[ordered]@{}`、`Get-CimInstance` 
 - 定时任务（`-InstallTask` 思路已实现但未接入）
 - 跨平台 bash 版
 - 更多域名覆盖（目前刻意只保留 10 个，因为实测其余域名光靠 DNS 就够用）
+
+---
+
+## 十二、网站与发布（1.0.1 之后）
+
+工具本身到 1.0.1 就稳定了，后面全部是「怎么让别人拿到、看懂、查得到」的工作。
+
+### 仓库结构
+
+```
+README.md                 用法、两种方式对比、FAQ、竞品对比、文档索引
+CHANGELOG.md              版本记录（只跟 .bat 版本号走）
+docs/index.html           宣传页（GitHub Pages，源在 docs/）
+docs/development.md       就是本文
+docs/hosts.txt            在线列表快照，Actions 定时刷新
+docs/setup-workflow.md    Actions 配置说明
+scripts/build.ps1         ★ 从 src 打包出 dist
+scripts/gen_hosts.py      生成 hosts.txt
+src/GitHub-IP-GUI.ps1     全部源码，单文件
+dist/L1-GitHub-Hosts.bat  构建产物（Release 资产就是它）
+```
+
+### 站点是怎么来的
+
+`docs/` 直接作为 Pages 根目录，没有构建步骤，改完 HTML 推上去就是新的。
+
+页面本身不依赖仓库快照：打开时实时向 jsDelivr、gitcdn、本地快照三个源拉数据，前端按「实测延迟分层 → 多源共识」排序渲染。所以就算快照过期，表格也是新的。
+
+「方法二」的复制和下载都是浏览器端现生成的，不读仓库文件 —— 这样文件头的时间永远等于你点下去的那一刻。
+
+### 三个 CSS bug（都是「看起来对，跑起来不对」）
+
+**① `.wrap` 吃掉了区块的上下内边距**
+
+```css
+.wrap{max-width:1040px;padding:0 20px}     /* 类选择器 */
+section{padding:44px 0}                     /* 元素选择器，被上面覆盖 */
+```
+
+`.wrap` 优先级更高，于是 `padding-top/bottom` 全变成 0，整页标题都贴着上一块内容。改成 `section.wrap{padding-top:44px;padding-bottom:44px}` 才正常。
+
+**② 对比表的 `min-width` 把整页撑宽**
+
+窄屏下表格 `min-width:600px` 没有容器约束，直接把 body 撑成 600px 宽，整页都溢出。加一层 `.tblwrap{overflow-x:auto}` 让表格自己滚。
+
+**③ 复制提示的伪元素占位**
+
+```css
+code.cp::after{content:"复制";opacity:0}   /* 看不见，但仍然占布局 */
+```
+
+长 URL 占满一行后，这个隐形的「复制」被挤到下一行，露出一个空白的边框块。改成 `display:none`，hover 时才 `display:inline`。
+
+### 无头浏览器验证的坑
+
+用 `msedge --headless=new --screenshot --window-size=390,900` 截窄屏，会看到文字被右侧裁掉，很容易误判成「页面横向溢出」。
+
+真相：**headless 的最小视口是 477px**，传 320 / 360 / 390 都按 477 渲染，但截图按传入值裁切。
+
+判断是否真溢出不能靠看截图，要注入脚本读 `document.documentElement.scrollWidth`，再用 `--dump-dom` 把结果读出来比对。
+
+### Actions 的 cron 不会准点跑
+
+工作流状态是 `active`，但 `17 * * * *` 整整两小时一次都没触发，`hosts.txt` 停在旧时间。
+
+- 低活跃仓库的 schedule 会被延迟甚至跳过，不能假设它按点执行
+- 改成 `7,37 * * * *`（每 30 分钟）提高命中率，并保留 `workflow_dispatch` 手动兜底
+- 更重要的是：**页面不要依赖定时产物**。下载已改成前端即时生成
+
+另外两个 Actions 相关的坑：
+
+- 提交 `.github/workflows/*` 的令牌必须额外有 `workflow` 权限，否则返回 404
+- 连续两次推送会让 Pages 构建 race，先提交的那次 `errored`；调 `POST /repos/{owner}/{repo}/pages/builds` 可以手动重建
+
+### 下载链接的取舍
+
+| 位置 | 指向 | 理由 |
+|---|---|---|
+| 方法一卡片按钮 | `releases/download/v1.0.1/L1-GitHub-Hosts.bat` | 一次点击直接下载 |
+| 页脚「下载」 | `releases/latest` | 想看版本说明的人在这里 |
+
+直链会 302 跳到 `release-assets.githubusercontent.com`，`Content-Type: application/octet-stream`，浏览器直接存盘。取前 3 字节确认是 `40 65 63`（`@ec`），说明拿到的是真文件而不是 HTML 错误页。
+
+### 协作纪律：先 diff 再推
+
+这个仓库会有人在网页上直接改（改标题文案、加粗某个词）。**脚本推送前必须先拉远程做 diff**，否则会静默覆盖。
+
+做法：取远程文件 → base64 解码落盘 → `diff -u` 对比 → 再决定推什么。提交时把远程返回的 `sha` 带上，GitHub 会用乐观锁挡住「基于旧版本覆盖」的写入。
+
+### 在新机器上继续开发
+
+```
+git clone https://github.com/gooooddayy/L1-github-hosts.git
+cd L1-github-hosts
+```
+
+1. 改 `src/GitHub-IP-GUI.ps1`（唯一源文件）
+2. 打包 —— 会先跑一次界面自检，不通过不会产出：
+
+```
+powershell -ExecutionPolicy Bypass -File scripts\build.ps1
+```
+
+3. 四个自检开关：
+
+```
+-SelfTest     界面能否创建（控件 / 列 / 域名数）
+-StressTest   边界 9 项（断网、只读、占用、空结果…）
+-DryRun       端到端：测速 → 写 hosts → 校验 → 报告，hosts 指向临时文件
+-TestRemote   三个远程源连通性
+```
+
+4. 产物覆盖 `dist/L1-GitHub-Hosts.bat`，和源码一起提交
+
+**注意**：永远从 `src` 重建，不要在成品 `.bat` 上二次解析 —— 启动命令里本身就含 `#PS-START` 这个字符串，用 `IndexOf` 找正文会命中错误位置（见第五章第 7 条）。
+
+实测过：在只有仓库文件、没有 `dist` 产物的干净目录里跑 `build.ps1`，生成的文件与仓库里那份 **SHA256 完全相同**。所以换电脑不需要带任何本地文件。
+
+唯一会变的是 `docs/hosts.txt` —— 它由 Actions 每 30 分钟覆盖，本地版本落后是正常的。
+
