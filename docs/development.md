@@ -1,4 +1,4 @@
-# 开发记录：从 0 到 1.0.0
+# 开发记录：从 0 到 1.0.1
 
 这份文档记录了这个工具怎么一步步变成现在的样子，包括**做过的判断、踩过的坑、以及为什么最后是这么设计的**。
 
@@ -402,6 +402,7 @@ code.cp::after{content:"复制";opacity:0}   /* 看不见，但仍然占布局 *
 
 - 低活跃仓库的 schedule 会被延迟甚至跳过，不能假设它按点执行
 - 改成 `7,37 * * * *`（每 30 分钟）提高命中率，并保留 `workflow_dispatch` 手动兜底
+- 实测仍然很稀疏：建库头两天只有 2 次定时运行（UTC `00:36`、`19:39`，间隔 4.9 小时），而计划是每 30 分钟
 - 更重要的是：**页面不要依赖定时产物**。下载已改成前端即时生成
 
 另外两个 Actions 相关的坑：
@@ -438,13 +439,15 @@ cd L1-github-hosts
 powershell -ExecutionPolicy Bypass -File scripts\build.ps1
 ```
 
-3. 四个自检开关：
+3. 六个启动开关（前四个是自检，后两个是排障）：
 
 ```
 -SelfTest     界面能否创建（控件 / 列 / 域名数）
 -StressTest   边界 9 项（断网、只读、占用、空结果…）
 -DryRun       端到端：测速 → 写 hosts → 校验 → 报告，hosts 指向临时文件
 -TestRemote   三个远程源连通性
+-Diagnose     打印环境：PS 版本 / 管理员权限 / WinForms 与 Drawing 能否加载
+-NoRemote     只用内置候选池，不拉三个远程源
 ```
 
 4. 产物覆盖 `dist/L1-GitHub-Hosts.bat`，和源码一起提交
@@ -453,5 +456,5 @@ powershell -ExecutionPolicy Bypass -File scripts\build.ps1
 
 实测过：在只有仓库文件、没有 `dist` 产物的干净目录里跑 `build.ps1`，生成的文件与仓库里那份 **SHA256 完全相同**。所以换电脑不需要带任何本地文件。
 
-唯一会变的是 `docs/hosts.txt` —— 它由 Actions 每 30 分钟覆盖，本地版本落后是正常的。
+唯一会变的是 `docs/hosts.txt` —— 它由 Actions 定时覆盖（计划每 30 分钟，实际被 GitHub 限流，见上一节实测数据），本地版本落后是正常的。
 

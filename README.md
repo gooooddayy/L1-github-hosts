@@ -243,7 +243,7 @@ powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -TestRemote  # 
 |---|---|
 | [README.md](README.md) | 就是这个文件：用法、两种方式对比、FAQ、与同类项目对比 |
 | [CHANGELOG.md](CHANGELOG.md) | 版本记录，每个版本改了什么、依据是什么 |
-| [**docs/development.md**](docs/development.md) | **完整迭代记录**：竞品分析 → 命令行原型 → GUI 选型 → 单文件打包 → 10 个踩坑 → 成功率优化（三次实测）→ 排序口径与网段分散 → 稳定性与兼容性 → 边界压测 → 全流程自检 |
+| [**docs/development.md**](docs/development.md) | **完整迭代记录**：竞品分析 → 命令行原型 → GUI 选型 → 单文件打包 → 10 个踩坑 → 成功率优化（三次实测）→ 排序口径与网段分散 → 稳定性与兼容性 → 边界压测 → 全流程自检 → **网站与发布**（含「在新机器上继续开发」） |
 | [docs/setup-workflow.md](docs/setup-workflow.md) | `hosts.txt` 自动刷新的原理与 Actions 配置 |
 | [src/GitHub-IP-GUI.ps1](src/GitHub-IP-GUI.ps1) | 全部源码，1 个文件，带 4 个自检开关 |
 
