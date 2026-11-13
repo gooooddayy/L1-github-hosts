@@ -34,6 +34,7 @@ $cmd = 'powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Comma
 $header = @()
 $header += '@echo off'
 $header += 'set "SELF={P}~f0"'
+# 用 /min 而不是 /b：/b 会跟调用者的控制台共用窗口，脚本再隐藏就会把用户自己的终端也藏掉
 $header += 'start "" /min ' + $cmd
 $header += 'exit /b'
 $header += '#PS-START'

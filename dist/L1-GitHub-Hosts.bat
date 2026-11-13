@@ -37,6 +37,8 @@ if ($PSVersionTable.PSVersion.Major -lt 3) {
 
 $ErrorActionPreference = 'Continue'
 
+$IS_GUI = (-not $SelfTest -and -not $TestRemote -and -not $StressTest -and -not $DryRun -and -not $Diagnose)
+
 # ==================== 传输层 ====================
 # Windows 7/8 的 .NET 默认只协商到 TLS 1.0，而 GitHub 早已只接受 1.2+。
 # 不显式指定的话，旧系统上会出现"所有 IP 都连不上"，而且报错完全看不出原因。
@@ -49,6 +51,7 @@ catch { }
 # 所有未处理异常都落到这一个文件，用户可以直接发回来定位，不用猜。
 $LOG_DIR  = Join-Path $env:LOCALAPPDATA 'L1GitHubHosts'
 $LOG_FILE = Join-Path $LOG_DIR 'error.log'
+$RUN_MARK = Join-Path $LOG_DIR 'running.marker'
 
 function Write-CrashLog {
     param([string]$Scene = '', $Err = $null)
@@ -137,7 +140,7 @@ if (-not $SelfTest -and -not $TestRemote -and -not $StressTest -and -not $DryRun
         $ok = $false
         if ($PSCommandPath -and (Test-Path -LiteralPath $PSCommandPath)) {
             try {
-                Start-Process powershell -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-WindowStyle','Hidden','-File',"`"$PSCommandPath`"") -Verb RunAs -ErrorAction Stop
+                Start-Process powershell -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File',"`"$PSCommandPath`"") -Verb RunAs -ErrorAction Stop
                 $ok = $true
             }
             catch { }
@@ -150,6 +153,45 @@ if (-not $SelfTest -and -not $TestRemote -and -not $StressTest -and -not $DryRun
             'L1 GitHub Hosts', 'OK', 'Warning') | Out-Null
         exit
     }
+}
+
+# ==================== 单实例 ====================
+# 多开是崩溃的放大器：每个实例都会拉起 40 个测速线程，开几个叠加很容易把连接表和内存压穿。
+# 第二个实例不再开新窗，直接把已有窗口叫到前台然后退出。
+$script:L1Mutex = $null
+$script:PrevRun = ''
+if ($IS_GUI) {
+    try {
+        $created = $false
+        $script:L1Mutex = New-Object System.Threading.Mutex($true, 'Local\L1GitHubHosts', [ref]$created)
+        if (-not $created) {
+            try {
+                $old = Get-Process -Name powershell -ErrorAction SilentlyContinue |
+                       Where-Object { $_.MainWindowTitle -eq 'L1 GitHub Hosts' } |
+                       Select-Object -First 1
+                if ($old) {
+                    # 用 COM 的 AppActivate，省掉一次 Add-Type 编译（那要几百毫秒）
+                    $ws = New-Object -ComObject WScript.Shell
+                    [void]$ws.AppActivate($old.Id)
+                }
+            }
+            catch { }
+            exit 0
+        }
+    }
+    catch { }
+}
+
+# 上次是不是没走正常退出：有标记说明进程被结束或崩了，下一轮在日志里说出来
+if ($IS_GUI) {
+    try {
+        if (Test-Path $RUN_MARK) {
+            $oldMark = ([System.IO.File]::ReadAllText($RUN_MARK)).Trim()
+            if ($oldMark) { $script:PrevRun = $oldMark }
+        }
+        [System.IO.File]::WriteAllText($RUN_MARK, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'))
+    }
+    catch { }
 }
 
 Add-Type -AssemblyName System.Windows.Forms
@@ -1398,6 +1440,9 @@ catch { Write-CrashLog '屏幕适配' $_ }
 # ==================== 启动 ====================
 $form.Add_Shown({
     Write-Log '点「重新测速」按钮，大约需要 20-30 秒'
+    if ($script:PrevRun) {
+        Write-Log ('上次运行没有正常退出（' + $script:PrevRun + ' 启动），可能是被安全软件结束或程序崩溃')
+    }
     $pos = Get-HostsContent
     if ($pos -match [regex]::Escape($MARK_START)) {
         Write-Log 'hosts 里已有本工具写入的配置，重新测速会覆盖它'
@@ -1658,4 +1703,6 @@ catch {
 finally {
     try { $script:ToastTimer.Stop(); $script:ToastTimer.Dispose() } catch { }
     try { $form.Dispose() } catch { }
+    # 正常退出要撤掉标记，否则下次启动会误报"上次异常退出"
+    try { if (Test-Path $RUN_MARK) { Remove-Item $RUN_MARK -Force -ErrorAction SilentlyContinue } } catch { }
 }

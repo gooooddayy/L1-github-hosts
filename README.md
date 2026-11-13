@@ -1,4 +1,4 @@
-# L1 GitHub Hosts
+﻿# L1 GitHub Hosts
 
 > **更新 GitHub为最新 hosts · GitHub 访问加速 · Windows bat单文件**
 >
@@ -32,6 +32,8 @@ Windows 版就是**一个 `.bat` 文件**，不是安装包，不用解压，不
 
 1. 下载 [`L1-GitHub-Hosts.bat`](https://github.com/gooooddayy/L1-github-hosts/releases/download/v1.0.1/L1-GitHub-Hosts.bat)
    > 提示「此文件来自其他计算机」：右键文件 → 属性 → 勾选底部「解除锁定」→ 确定。这是 Windows 对下载文件的保护，任何未签名程序都会遇到。
+   >
+   > 首次运行如果 360 弹「正在进行可疑操作」，选允许即可，处理办法见文末 [常见问题](#常见问题)。
 2. 双击运行，UAC 点「是」—— 写 hosts 必须管理员权限，只会弹这一次
 3. 点界面上的 **开始测速**，等 15～25 秒
 
@@ -142,6 +144,21 @@ https://gooooddayy.github.io/L1-github-hosts/hosts.txt
 </details>
 
 <details>
+<summary><b>360 提示「可疑操作」或拦着不让写 hosts，怎么办？</b></summary>
+
+工具是「bat 解出一段 PowerShell 再跑界面」，这个形态会被 360 的主动防御当成可疑行为 —— 凡是脚本工具都躲不过，不是这个包特有的问题。按提示选**允许**即可：
+
+- **启动时提示「正在进行可疑操作」** —— 选允许。选阻止的话窗口根本不会出现。
+- **写入 hosts 时提示修改系统文件** —— 选允许。
+- **不想每次都点** —— 把 bat 所在的**目录**加进信任区（木马查杀 → 信任区 → 添加目录）。注意是加目录、不是加单个文件：重新打包后文件哈希会变，只信任文件的话下次又会问。
+- **想更彻底** —— 设置 → 安全防护中心 → 关闭「核晶防护」。它负责进程创建 hook 和模块注入，关掉后启动更快，也少一类崩溃来源；其他防护不受影响。
+- **完全不想处理** —— 先退出 360，双击运行，用完再开回来。
+
+启动和关闭时如果闪过一下命令行窗口，那是 `.bat` 的固有开销，正常约 0.3 秒；被 360 首次扫描新文件时会拖到 1～2 秒，加进信任区后恢复。另外工具限制了单实例，重复双击只会把已有窗口叫到前面，不会叠出一堆进程。
+
+</details>
+
+<details>
 <summary><b>两种方法可以一起用吗？</b></summary>
 
 **不要**。方法二复制的内容自带独立的起止标记，和方法一写的那段是两套，同时存在会让同一个域名有多条记录、互相抢优先级。
@@ -224,6 +241,8 @@ TCP 握手在国内会被中间设备代答，测出来常常是 1ms 的假值 �
 - 测速用裸 socket + SslStream，**不走系统代理**，测的是真实路径
 - 强制 TLS 1.2+，兼容 Windows 7/8 的旧版 .NET
 - 崩溃日志写到 `%LOCALAPPDATA%\L1GitHubHosts\error.log`
+- 单实例：重复双击不会叠进程，只会把已有窗口置前
+- 异常退出标记：`%LOCALAPPDATA%\L1GitHubHosts\running.marker`，正常关窗才删，下次启动会在日志里提示
 - 高 DPI 和小屏幕自动缩放，1366×768 @125% 也能完整显示
 
 **自检命令**（源码位于 [`src/GitHub-IP-GUI.ps1`](src/GitHub-IP-GUI.ps1)）：
@@ -233,6 +252,8 @@ powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -SelfTest    # 
 powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -StressTest  # 边界压测（9 项）
 powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -DryRun      # 端到端全流程
 powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -TestRemote  # 远程源连通性
+powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -Diagnose    # 环境诊断（版本/权限/组件）
+powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -NoRemote    # 只用内置池，不拉远程源
 ```
 
 ---
@@ -245,7 +266,7 @@ powershell -ExecutionPolicy Bypass -File .\src\GitHub-IP-GUI.ps1 -TestRemote  # 
 | [CHANGELOG.md](CHANGELOG.md) | 版本记录，每个版本改了什么、依据是什么 |
 | [**docs/development.md**](docs/development.md) | **完整迭代记录**：竞品分析 → 命令行原型 → GUI 选型 → 单文件打包 → 10 个踩坑 → 成功率优化（三次实测）→ 排序口径与网段分散 → 稳定性与兼容性 → 边界压测 → 全流程自检 → **网站与发布**（含「在新机器上继续开发」） |
 | [docs/setup-workflow.md](docs/setup-workflow.md) | `hosts.txt` 自动刷新的原理与 Actions 配置 |
-| [src/GitHub-IP-GUI.ps1](src/GitHub-IP-GUI.ps1) | 全部源码，1 个文件，带 4 个自检开关 |
+| [src/GitHub-IP-GUI.ps1](src/GitHub-IP-GUI.ps1) | 全部源码，1 个文件，6 个开关（4 个自检 + 2 个排障） |
 
 ---
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -435,6 +435,15 @@
     </ul>
   </details>
   <details>
+    <summary>360 提示可疑操作 / 不让写 hosts 怎么办？</summary>
+    <ul>
+      <li>启动提示「正在进行可疑操作」——选允许；选阻止的话窗口不会出现</li>
+      <li>写入 hosts 提示修改系统文件——选允许</li>
+      <li>不想每次点：把 bat 所在<strong>目录</strong>加进 360 信任区（木马查杀 → 信任区 → 添加目录）。加目录、别加单个文件，重新打包后哈希会变</li>
+      <li>想更彻底：设置 → 安全防护中心 → 关闭「核晶防护」，其他防护不受影响</li>
+    </ul>
+  </details>
+  <details>
     <summary>支持 Windows 7 吗？</summary>
     <p>需要 PowerShell 3.0 以上。Windows 7 请先装 WMF 5.1，工具会检查版本并给出中文提示。</p>
   </details>
@@ -526,6 +535,11 @@
       "@type": "Question",
       "name": "这个工具会修改 hosts 里的其它内容吗？",
       "acceptedAnswer": { "@type": "Answer", "text": "不会。只写入 # === GitHub IP BEGIN === 到 # === GitHub IP END === 之间的内容，写入前自动备份为 hosts.bak，可一键恢复初始状态。" }
+    },
+    {
+      "@type": "Question",
+      "name": "360 提示可疑操作或不让写 hosts 怎么办？",
+      "acceptedAnswer": { "@type": "Answer", "text": "启动与写入时的提示都选允许。不想每次点，可以把 bat 所在目录加进 360 信任区（木马查杀 → 信任区 → 添加目录），注意加目录而不是单个文件，重新打包后哈希会变。想更彻底可以在安全防护中心关闭核晶防护，其他防护不受影响。" }
     }
   ]
 }
